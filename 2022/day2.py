@@ -14,6 +14,18 @@ class RPS(Enum):
     PAPER = 2
     SCISSORS = 3
 
+    def rotate_down(self):
+        if self.value == 1:
+            return RPS(3)
+        else:
+            return RPS(self.value - 1)
+
+    def rotate_up(self):
+        if self.value == 3:
+            return RPS(1)
+        else:
+            return RPS(self.value + 1)
+
 
 def scoring(mine: RPS, theirs: RPS) -> int:
     # print(f"Decoding {mine} vs {theirs} as")
@@ -42,7 +54,21 @@ decoderRing = {
 }
 
 
-def sum_score(lines):
+def calculate_move(desired_string: str, theirs: RPS) -> RPS:
+    # good old rock nothing beats rock
+    match desired_string:
+        # lose
+        case "X":
+            return theirs.rotate_down()
+        case "Y":
+            return theirs
+        case "Z":
+            return theirs.rotate_up()
+        case _:
+            assert False
+
+
+def sum_score_v1(lines):
     sum = 0
     for line in lines:
         [theirs_encoded, mine_encoded] = line.split(" ")
@@ -55,10 +81,23 @@ def sum_score(lines):
     return sum
 
 
+def sum_score_v2(lines):
+    sum = 0
+    for line in lines:
+        [theirs_encoded, mine_encoded] = line.split(" ")
+        theirs = RPS(decoderRing[theirs_encoded])
+        mine = calculate_move(mine_encoded, theirs)
+        # print(f"line [{line}]: {theirs} vs {mine} => {scoring(mine, theirs)}")
+        sum += scoring(mine, theirs)
+        sum += mine.value
+
+    return sum
+
+
 def main():
     with open("day2_input.txt", "r") as file:
         lines = [line.strip() for line in file]
-    print(sum_score(lines))
+    print(sum_score_v2(lines))
 
 
 if __name__ == "__main__":
