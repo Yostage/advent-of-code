@@ -56,7 +56,9 @@ def sum_score(lines):
 
 
 def main():
-    pass
+    with open("day2_input.txt", "r") as file:
+        lines = [line.strip() for line in file]
+    print(sum_score(lines))
 
 
 if __name__ == "__main__":
