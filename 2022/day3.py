@@ -1,3 +1,7 @@
+import itertools
+from typing import Iterator, List
+
+
 def char_to_priority(c: str) -> int:
     # Lowercase item types a through z have priorities 1 through 26.
     # Uppercase item types A through Z have priorities 27 through 52.
@@ -8,6 +12,17 @@ def char_to_priority(c: str) -> int:
         return 27 + ord(c[0]) - ord("A")
     else:
         assert False
+
+
+def find_shared_badge(compartment_strings: List[str]):
+    assert len(compartment_strings) == 3
+    badge = (
+        set(compartment_strings[0])
+        & set(compartment_strings[1])
+        & set(compartment_strings[2])
+    )
+    assert len(badge) == 1
+    return char_to_priority(list(badge)[0])
 
 
 def find_shared_priority(compartment_string: str):
@@ -28,10 +43,17 @@ def find_shared_priority(compartment_string: str):
     return char_to_priority(shared_elements[0])
 
 
+def grouper(iterator: Iterator, n: int) -> Iterator[list]:
+    while chunk := list(itertools.islice(iterator, n)):
+        yield chunk
+
+
 def main():
+    sum = 0
     with open("day3_input.txt", "r") as file:
-        pri = [find_shared_priority(line.strip()) for line in file]
-    print(sum(pri))
+        for chunk in grouper(iter(file.read().splitlines()), 3):
+            sum += find_shared_badge(chunk)
+    print(sum)
 
 
 if __name__ == "__main__":
