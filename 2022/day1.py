@@ -26,23 +26,20 @@ example = """1000
 def main():
     elves = []
     accumulator = 0
-    with open('day1_input.txt', 'r') as file:
+    with open("day1_input.txt", "r") as file:
         for line in file:
             line = line.strip()
             if line:
                 accumulator += int(line)
             else:
                 elves.append(accumulator)
-                accumulator=0
+                accumulator = 0
 
     # final elf
     elves.append(accumulator)
-    accumulator=0
+    accumulator = 0
 
-    # print(elves)
     print(f"Max elf: {max(elves)}")
-
-
 
 
 main()
