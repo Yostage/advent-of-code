@@ -1,3 +1,5 @@
+import heapq
+
 # https://adventofcode.com/2022/day/1
 
 # split the list into individual elves
@@ -40,6 +42,9 @@ def main():
     accumulator = 0
 
     print(f"Max elf: {max(elves)}")
+
+    top_3 = heapq.nlargest(3, elves)
+    print(f"Sum of top elves: {sum(top_3)}")
 
 
 main()
