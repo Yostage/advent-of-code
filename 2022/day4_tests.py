@@ -3,7 +3,12 @@ import itertools
 from typing import Iterator
 import unittest
 
-from day4 import input_string_to_intervals, compare_intervals, intervals_overlap
+from day4 import (
+    input_string_to_intervals,
+    compare_intervals,
+    intervals_completely_overlap,
+    intervals_overlap,
+)
 
 
 class TestDay4(unittest.TestCase):
@@ -19,7 +24,7 @@ class TestDay4(unittest.TestCase):
         intervalList = [
             input_string_to_intervals(line) for line in self.example.splitlines()
         ]
-        matches = [1 if intervals_overlap(i) else 0 for i in intervalList]
+        matches = [1 if intervals_completely_overlap(i) else 0 for i in intervalList]
         self.assertEqual(sum(matches), 2)
 
     def test_input_parsing(self):
@@ -42,10 +47,16 @@ class TestDay4(unittest.TestCase):
             [[1, 3], [1, 2]],
         )
 
+    def test_intervals_completely_overlap(self):
+        self.assertTrue(intervals_completely_overlap([[1, 2], [1, 3]]))
+        self.assertFalse(intervals_completely_overlap([[1, 2], [2, 3]]))
+        self.assertFalse(intervals_completely_overlap([[1, 3], [2, 4]]))
+
     def test_intervals_overlap(self):
-        self.assertTrue(intervals_overlap([[1, 2], [1, 3]]))
-        self.assertFalse(intervals_overlap([[1, 2], [2, 3]]))
-        self.assertFalse(intervals_overlap([[1, 3], [2, 4]]))
+        self.assertTrue(intervals_overlap([[1, 2], [1, 2]]))
+        self.assertTrue(intervals_overlap([[1, 2], [2, 3]]))
+        self.assertTrue(intervals_overlap([[1, 3], [2, 4]]))
+        self.assertFalse(intervals_overlap([[1, 3], [4, 5]]))
 
 
 if __name__ == "__main__":

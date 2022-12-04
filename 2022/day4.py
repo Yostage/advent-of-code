@@ -22,10 +22,18 @@ def compare_intervals(a, b) -> int:
         return (b[1] - b[0]) - (a[1] - a[0])
 
 
-def intervals_overlap(intervals) -> bool:
+def intervals_completely_overlap(intervals) -> bool:
     assert len(intervals) == 2
     intervals.sort(key=functools.cmp_to_key(compare_intervals))
     return intervals[0][0] <= intervals[1][0] and intervals[0][1] >= intervals[1][1]
+
+
+# including when they touch
+def intervals_overlap(intervals) -> bool:
+    assert len(intervals) == 2
+    intervals.sort(key=functools.cmp_to_key(compare_intervals))
+    # the second LHS needs to be >= the lft and <= the right
+    return intervals[1][0] >= intervals[0][0] and intervals[1][0] <= intervals[0][1]
 
 
 def main():
