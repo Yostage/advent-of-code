@@ -9,6 +9,7 @@ from day5 import (
     parse_input,
     parse_instructions,
     part_one,
+    part_two,
     # input_string_to_intervals,
     # compare_intervals,
     # intervals_completely_overlap,
@@ -49,6 +50,10 @@ move 1 from 1 to 2"""
     def test_part_one(self):
         answer = part_one(self.example.splitlines())
         self.assertEqual(answer, ["C", "M", "Z"])
+
+    def test_part_two(self):
+        answer = part_two(self.example.splitlines())
+        self.assertEqual(answer, ["M", "C", "D"])
 
 
 if __name__ == "__main__":

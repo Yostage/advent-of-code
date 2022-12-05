@@ -38,6 +38,19 @@ def execute_move(crates: List[List[int]], move: List[int]) -> None:
         crates[dest - 1].append(crates[src - 1].pop())
 
 
+def execute_move_v2(crates: List[List[int]], move: List[int]) -> None:
+    print(f"Crates: {crates}")
+    print(f"Executing move: {move}")
+    (num_crates, src, dest) = move
+
+    # 1 indexed
+    crane = []
+    for _ in range(num_crates):
+        crane.append(crates[src - 1].pop())
+    for pkg in reversed(crane):
+        crates[dest - 1].append(pkg)
+
+
 def parse_input(lines: List[str]):
     top_down_crates = []
     moves = []
@@ -84,11 +97,19 @@ def part_one(lines):
     return [crate[-1] for crate in crates]
 
 
+def part_two(lines):
+    (top_down_crates, moves) = parse_input(lines)
+    crates = cratelines_to_crates(top_down_crates)
+    for move in moves:
+        execute_move_v2(crates, move)
+    return [crate[-1] for crate in crates]
+
+
 def main():
     with open("day5_input.txt", "r") as file:
         lines = file.read().splitlines()
 
-    print(part_one(lines))
+    print(part_two(lines))
 
     # intervalList = [
     #     input_string_to_intervals(line) for line in file.read().splitlines()
