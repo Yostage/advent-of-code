@@ -44,11 +44,9 @@ def execute_move_v2(crates: List[List[int]], move: List[int]) -> None:
     (num_crates, src, dest) = move
 
     # 1 indexed
-    crane = []
-    for _ in range(num_crates):
-        crane.append(crates[src - 1].pop())
-    for pkg in reversed(crane):
-        crates[dest - 1].append(pkg)
+    # slice the chunk off the end of the dest, put it on the src, then delete it
+    crates[dest - 1] += crates[src - 1][-num_crates:]
+    del crates[src - 1][-num_crates:]
 
 
 def parse_input(lines: List[str]):
