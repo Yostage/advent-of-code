@@ -14,6 +14,30 @@ def take(iterable, n):
     return list(itertools.islice(iterable, n))
 
 
+def cratelines_to_crates(lines):
+    # how many crates are there
+    num_crates = len(lines[0])
+    crates = [[] for _ in range(num_crates)]
+    # started from the bottom now we here
+    for crateline in reversed(lines):
+        for idx, x in enumerate(crateline):
+            if x is None:
+                continue
+            else:
+                crates[idx].append(x)
+
+    return crates
+
+
+def execute_move(crates: List[List[int]], move: List[int]) -> None:
+    print(f"Crates: {crates}")
+    print(f"Executing move: {move}")
+    (num_crates, src, dest) = move
+    # 1 indexed
+    for _ in range(num_crates):
+        crates[dest - 1].append(crates[src - 1].pop())
+
+
 def parse_input(lines: List[str]):
     top_down_crates = []
     moves = []
@@ -52,15 +76,25 @@ def parse_instructions(line: str) -> List[int]:
     # return ["N", None]
 
 
+def part_one(lines):
+    (top_down_crates, moves) = parse_input(lines)
+    crates = cratelines_to_crates(top_down_crates)
+    for move in moves:
+        execute_move(crates, move)
+    return [crate[-1] for crate in crates]
+
+
 def main():
     with open("day5_input.txt", "r") as file:
         lines = file.read().splitlines()
 
-        # intervalList = [
-        #     input_string_to_intervals(line) for line in file.read().splitlines()
-        # ]
-        # matches = [1 if intervals_overlap(i) else 0 for i in intervalList]
-        # print(sum(matches))
+    print(part_one(lines))
+
+    # intervalList = [
+    #     input_string_to_intervals(line) for line in file.read().splitlines()
+    # ]
+    # matches = [1 if intervals_overlap(i) else 0 for i in intervalList]
+    # print(sum(matches))
 
 
 if __name__ == "__main__":
