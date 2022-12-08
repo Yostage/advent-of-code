@@ -3,11 +3,10 @@ import itertools
 import unittest
 from typing import Iterator
 
-from day6 import find_signal
 from day7 import parse_lines
 
 
-class TestDay6(unittest.TestCase):
+class TestDay7(unittest.TestCase):
 
     example1 = """$ cd /
 $ ls
