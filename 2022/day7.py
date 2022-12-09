@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 from dataclasses import dataclass, field
 from typing import TypeVar
 
-# SelfElvenDirectory = TypeVar("SelfElvenDirectory", bound="ElvenDirectory")
+SelfElvenDirectory = TypeVar("SelfElvenDirectory", bound="ElvenDirectory")
 
 
 @dataclass
@@ -19,11 +19,22 @@ class ElvenFile:
 class ElvenDirectory:
 
     name: str
-    parent: Any
+    parent: SelfElvenDirectory
     files: List[ElvenFile] = field(default_factory=list)
-    directories: Dict[str, Any] = field(default_factory=dict)
+    directories: Dict[str, SelfElvenDirectory] = field(default_factory=dict)
 
-    # @cache
+    def __hash__(self) -> int:
+        return self.get_full_name().__hash__()
+
+    def get_full_name(self) -> str:
+        tokens = []
+        ptr = self
+        while ptr:
+            tokens.append(ptr.name)
+            ptr = ptr.parent
+        return "/".join(reversed(tokens))
+
+    @cache
     def get_recursive_size(self) -> int:
         return sum([f.size for f in self.files]) + sum(
             [d.get_recursive_size() for d in self.directories.values()]
