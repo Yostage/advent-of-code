@@ -14,6 +14,10 @@ class TestDay8(unittest.TestCase):
 33549
 35390"""
 
+    def test_parse_lines(self):
+        parse_lines(self.example.splitlines())
+        self.assertTrue(True)
+
     def test_part_one(self):
         trees = parse_lines(self.example.splitlines())
         self.assertEqual(part_one(self.example.splitlines()), 21)
