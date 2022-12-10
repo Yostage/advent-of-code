@@ -13,9 +13,6 @@ class Point:
     x: int
     y: int
 
-    def __hash__(self):
-        return hash((self.x, self.y))
-
 
 @dataclass
 class Move:
@@ -35,30 +32,34 @@ from math import copysign
 
 
 def sign(x: int) -> int:
-    return 0 if x == 0 else copysign(1, x)
+    return 0 if x == 0 else int(copysign(1, x))
 
 
 class SnakeGame:
-    head = Point(0, 0)
-    tail = Point(0, 0)
+    segments: List[Point]
 
-    def move_head(self, move: Move) -> None:
-        for _ in range(move.magnitude):
-            self.head = self.move_point(self.head, move.dir)
-            self.update_tail()
+    def __init__(self, length: int):
+        self.segments = [Point(0, 0) for _ in range(length)]
 
-    def update_tail(self) -> None:
+    def one_step(self, dir: str) -> None:
+        # the head moves
+        self.segments[0] = self.move_point(self.segments[0], dir)
+        # every single segment then possibly updates afterwards
+        for idx in range(1, len(self.segments)):
+            self.segments[idx] = self.update_segment(
+                self.segments[idx], self.segments[idx - 1]
+            )
+
+    def update_segment(self, tail: Point, head: Point) -> Point:
+        delta_x = head.x - tail.x
+        delta_y = head.y - tail.y
+
         # tail is one or zero spaces away, stay put
-        # if abs(self.head.x - self.tail.x)  2 and abs(self.head.y - self.tail.y) < 2:
-        # return
-        # otherwise, move tail at most one spaces on both x and y
-        delta_x = self.head.x - self.tail.x
-        delta_y = self.head.y - self.tail.y
         if abs(delta_x) < 2 and abs(delta_y) < 2:
-            return
+            return tail
 
-        self.tail.x += sign(delta_x)
-        self.tail.y += sign(delta_y)
+        # otherwise, move tail at most one spaces on both x and y
+        return Point(tail.x + sign(delta_x), tail.y + sign(delta_y))
 
     def move_point(self, input: Point, direction: str) -> Point:
         assert direction in supported_directions
@@ -94,18 +95,12 @@ def parse_lines(lines: List[str]) -> List[Move]:
 
 def part_one(lines):
     moves = parse_lines(lines)
-    snake = SnakeGame()
+    snake = SnakeGame(2)
     tail_positions = set()
     for move in moves:
         for _ in range(move.magnitude):
-            snake.head = snake.move_point(snake.head, move.dir)
-            snake.update_tail()
-            # print(
-            #     f"head = [{snake.head.x}, {snake.head.y}, tail = [{snake.tail.x}, {snake.tail.y}]"
-            # )
-            tail_positions.add((snake.tail.x, snake.tail.y))
-
-        # snake.move_head(move)
+            snake.one_step(move.dir)
+            tail_positions.add((snake.segments[1].x, snake.segments[1].y))
 
     # print(tail_positions)
     # for y in range(5):
@@ -115,8 +110,15 @@ def part_one(lines):
 
 
 def part_two(lines):
-    parse_lines(lines)
-    return None
+    moves = parse_lines(lines)
+    snake = SnakeGame(10)
+    tail_positions = set()
+    for move in moves:
+        for _ in range(move.magnitude):
+            snake.one_step(move.dir)
+            tail_positions.add((snake.segments[9].x, snake.segments[9].y))
+
+    return len(tail_positions)
 
 
 def main():

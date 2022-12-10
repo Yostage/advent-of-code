@@ -17,6 +17,15 @@ D 1
 L 5
 R 2"""
 
+    example2 = """R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20"""
+
     def test_parse_lines(self):
         input = parse_lines(self.example.splitlines())
         print(input)
@@ -25,11 +34,10 @@ R 2"""
     def test_part_one(self):
         result = part_one(self.example.splitlines())
         self.assertEqual(result, 13)
-        # self.assertTrue(True)
 
     def test_part_two(self):
-        # self.assertEqual(part_two(self.example.splitlines()), 8)
-        self.assertTrue(True)
+        result = part_two(self.example2.splitlines())
+        self.assertEqual(result, 36)
 
 
 if __name__ == "__main__":
