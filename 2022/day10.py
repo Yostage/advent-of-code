@@ -1,7 +1,3 @@
-import functools
-import re
-from dataclasses import dataclass, field
-from functools import cache
 from typing import Any, Dict, List, TypeVar
 
 
@@ -14,44 +10,56 @@ def part_one(lines):
     cycle = 0
     x_register = 1
     interesting_signals = []
+    screen_x = 40
+    pixels = []
 
-    def check_clock():
-        if cycle % 40 == 20:
-            print(f"registering signal @ {cycle} = {cycle * x_register}")
+    def clock():
+        nonlocal cycle
+        nonlocal pixels
+
+        # render sprite
+        scan_pos = cycle % screen_x
+        if scan_pos == 0:
+            # emit the row
+            if cycle > 0:
+                print("".join(pixels))
+            # clear the buffer
+            pixels = ["."] * screen_x
+
+        if abs(scan_pos - x_register) < 2:
+            pixels[scan_pos] = "#"
+
+        cycle += 1
+        # did we just wrap?
+        if scan_pos == screen_x - 1:
+            print("".join(pixels))
+
+        if cycle % screen_x == 20:
+            # print(f"registering signal @ {cycle} = {cycle * x_register}")
             interesting_signals.append(cycle * x_register)
 
     for line in input:
         # process instruction
         if line == "noop":
-            cycle += 1
-            check_clock()
+            clock()
         elif line.startswith("addx"):
-            (_, param) = line.split(" ")
-            cycle += 1
-            check_clock()
-            cycle += 1
-            check_clock()
-            x_register += int(param)
+            param = int(line.split(" ")[1])
+            clock()
+            clock()
+            x_register += param
         else:
             print(f"parse error [{line}]")
             assert False
         # check signal strengths
         # print(f"clock cycle = {cycle} x = {x_register}")
-        # check_clock()
 
     return sum(interesting_signals)
-
-
-def part_two(lines):
-    parse_lines(lines)
-    return None
 
 
 def main():
     with open("day10_input.txt", "r") as file:
         lines = file.read().splitlines()
         print(part_one(lines))
-        print(part_two(lines))
 
 
 if __name__ == "__main__":

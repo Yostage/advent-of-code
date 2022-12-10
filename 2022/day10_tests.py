@@ -1,10 +1,6 @@
-import functools
-import itertools
-from textwrap import dedent
 import unittest
-from typing import Iterator
 
-from day10 import parse_lines, part_one, part_two
+from day10 import parse_lines, part_one
 
 
 class TestDay10(unittest.TestCase):
@@ -158,16 +154,13 @@ noop"""
 
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
-        self.assertTrue(True)
+        # self.assertTrue(True)
 
     def test_part_one(self):
+        print()
         result = part_one(self.example.splitlines())
+        print()
         self.assertEqual(result, 13140)
-        self.assertTrue(True)
-
-    def test_part_two(self):
-        # self.assertEqual(part_two(self.example.splitlines()), 8)
-        self.assertTrue(True)
 
 
 if __name__ == "__main__":
