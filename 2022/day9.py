@@ -26,7 +26,7 @@ class Move:
         return f"{self.dir} {self.magnitude}"
 
 
-supported_directions = ["L", "R", "U", "D", "UL", "UR", "DL", "DR"]
+supported_directions = ["L", "R", "U", "D"]
 
 from math import copysign
 
@@ -72,14 +72,6 @@ class SnakeGame:
                 return Point(input.x, input.y + 1)
             case "D":
                 return Point(input.x, input.y - 1)
-            case "UL":
-                return Point(input.x - 1, input.y + 1)
-            case "UR":
-                return Point(input.x + 1, input.y + 1)
-            case "DL":
-                return Point(input.x - 1, input.y - 1)
-            case "DR":
-                return Point(input.x + 1, input.y - 1)
             case _:
                 assert False
 
