@@ -1,12 +1,10 @@
 from functools import cache
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 from dataclasses import dataclass, field
 from typing import TypeVar
-
-SelfElvenDirectory = TypeVar("SelfElvenDirectory", bound="ElvenDirectory")
 
 
 @dataclass
@@ -19,9 +17,9 @@ class ElvenFile:
 class ElvenDirectory:
 
     name: str
-    parent: SelfElvenDirectory
+    parent: Optional["ElvenDirectory"]
     files: List[ElvenFile] = field(default_factory=list)
-    directories: Dict[str, SelfElvenDirectory] = field(default_factory=dict)
+    directories: Dict[str, "ElvenDirectory"] = field(default_factory=dict)
 
     def __hash__(self) -> int:
         return self.get_full_name().__hash__()
@@ -31,7 +29,7 @@ class ElvenDirectory:
         ptr = self
         while ptr:
             tokens.append(ptr.name)
-            ptr = ptr.parent
+            ptr = ptr.parent  # type: ignore
         return "/".join(reversed(tokens))
 
     @cache
@@ -61,8 +59,7 @@ def parse_lines(lines: List[str]) -> ElvenDirectory:
         elif line == "$ ls":
             continue
         elif line == "$ cd ..":
-
-            cwd = cwd.parent
+            cwd = cwd.parent  # type: ignore
         elif line == "$ cd /":
             cwd = root
         elif match := re.search(r"(\d+) ([\w\.])+", line):
