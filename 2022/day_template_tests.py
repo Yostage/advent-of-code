@@ -13,15 +13,14 @@ class TestDay9(unittest.TestCase):
 
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
-        self.assertTrue(True)
 
     def test_part_one(self):
-        # self.assertEqual(part_one(self.example.splitlines()), 21)
-        self.assertTrue(True)
+        result = part_one(self.example.splitlines())
+        # self.assertEqual(result, 21)
 
     def test_part_two(self):
-        # self.assertEqual(part_two(self.example.splitlines()), 8)
-        self.assertTrue(True)
+        result = part_two(self.example.splitlines())
+        # self.assertEqual(result, 21)
 
 
 if __name__ == "__main__":
