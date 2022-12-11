@@ -46,7 +46,7 @@ Monkey 3:
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, 21)
+        self.assertEqual(result, 2713310158)
 
 
 if __name__ == "__main__":

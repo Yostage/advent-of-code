@@ -1,8 +1,9 @@
 import functools
+import math
 import re
 from dataclasses import dataclass, field
 from functools import cache
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 
 @dataclass
@@ -43,7 +44,12 @@ def parse_lines(lines: List[str]) -> List[Monkey]:
     return monkeys
 
 
-def take_turn(monkeys: List[Monkey], monkey_index: int) -> None:
+def take_turn(
+    monkeys: List[Monkey],
+    monkey_index: int,
+    boredom: Optional[int] = None,
+    ring_size: Optional[int] = None,
+) -> None:
     def mutate_item(item: int, operation: str) -> int:
         old = item
         return eval(operation)
@@ -57,7 +63,11 @@ def take_turn(monkeys: List[Monkey], monkey_index: int) -> None:
         # inspect it: mutate with the operator
         item = mutate_item(item, m.operation)
         # apply boredom
-        item = item // 3
+        if boredom is not None:
+            item = item // boredom
+
+        if ring_size is not None:
+            item = item % ring_size
 
         # increment inspection count
         m.count_inspected_items += 1
@@ -71,18 +81,23 @@ def take_turn(monkeys: List[Monkey], monkey_index: int) -> None:
         monkeys[dest].items.append(item)
 
 
-def take_round(monkeys: List[Monkey]) -> None:
+def take_round(
+    round_idx: int, monkeys: List[Monkey], boredom=None, ring_size=None
+) -> None:
     for idx, _ in enumerate(monkeys):
-        take_turn(monkeys, idx)
-    print("After round report:")
-    for idx, m in enumerate(monkeys):
-        print(f"Monkey {idx}: {m.items}")
+        take_turn(monkeys, idx, boredom=boredom, ring_size=ring_size)
+    # if round_idx % 5 == 0:
+    #     print(f"Round {round_idx}")
+    if round_idx in [1, 20] or round_idx % 1000 == 0:
+        print("After round report:")
+        for idx, m in enumerate(monkeys):
+            print(f"Monkey {idx}: {m.items}")
 
 
 def part_one(lines):
     monkeys = parse_lines(lines)
     for round in range(20):
-        take_round(monkeys)
+        take_round(round, monkeys, boredom=3)
     inspected = [m.count_inspected_items for m in monkeys]
     print(f"Monkey inspection count: {inspected}")
     inspected.sort()
@@ -90,8 +105,14 @@ def part_one(lines):
 
 
 def part_two(lines):
-    parse_lines(lines)
-    return None
+    monkeys = parse_lines(lines)
+    ring_size = math.lcm(*[m.test_divisor for m in monkeys])
+    for round in range(10000):
+        take_round(round, monkeys, ring_size=ring_size)
+    inspected = [m.count_inspected_items for m in monkeys]
+    print(f"Monkey inspection count: {inspected}")
+    inspected.sort()
+    return inspected[-1] * inspected[-2]
 
 
 def main():
