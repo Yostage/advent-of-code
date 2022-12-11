@@ -94,7 +94,7 @@ def take_round(
             print(f"Monkey {idx}: {m.items}")
 
 
-def part_one(lines):
+def part_one(lines) -> int:
     monkeys = parse_lines(lines)
     for round in range(20):
         take_round(round, monkeys, boredom=3)
@@ -104,7 +104,7 @@ def part_one(lines):
     return inspected[-1] * inspected[-2]
 
 
-def part_two(lines):
+def part_two(lines) -> int:
     monkeys = parse_lines(lines)
     ring_size = math.lcm(*[m.test_divisor for m in monkeys])
     for round in range(10000):
