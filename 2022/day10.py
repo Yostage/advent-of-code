@@ -17,22 +17,20 @@ def part_one(lines):
         nonlocal cycle
         nonlocal pixels
 
-        # render sprite
         scan_pos = cycle % screen_x
+        # clear the buffer
         if scan_pos == 0:
-            # emit the row
-            if cycle > 0:
-                print("".join(pixels))
-            # clear the buffer
             pixels = ["."] * screen_x
 
+        # render
         if abs(scan_pos - x_register) < 2:
             pixels[scan_pos] = "#"
 
-        cycle += 1
-        # did we just wrap?
+        # end of line
         if scan_pos == screen_x - 1:
             print("".join(pixels))
+
+        cycle += 1
 
         if cycle % screen_x == 20:
             # print(f"registering signal @ {cycle} = {cycle * x_register}")
