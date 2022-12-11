@@ -1,28 +1,25 @@
-from functools import cache
 import functools
 import re
-from typing import Any, Dict, List
-
-
 from dataclasses import dataclass, field
-from typing import TypeVar
+from functools import cache
+from typing import Any, Dict, List, TypeVar
 
 
 def parse_lines(lines: List[str]) -> Any:
     return None
 
 
-def part_one(lines):
+def part_one(lines) -> int:
     parse_lines(lines)
-    return None
+    return 0
 
 
-def part_two(lines):
+def part_two(lines) -> int:
     parse_lines(lines)
-    return None
+    return 0
 
 
-def main():
+def main() -> None:
     with open("day9_input.txt", "r") as file:
         lines = file.read().splitlines()
         print(part_one(lines))
