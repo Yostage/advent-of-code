@@ -1,5 +1,6 @@
 import functools
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar
@@ -12,14 +13,17 @@ class MapNode:
     neighbors: "Set[MapNode]"
     height: int
     visited: bool = False
-    best_distance: int = 2**16
+
     path_back: "Optional[MapNode]" = None
 
-    def printable_distance(self) -> str:
-        if self.best_distance > 1000:
-            return "!!"
-        else:
-            return f"{self.best_distance:02d}"
+    def pos(self) -> Tuple[int, int]:
+        return (self.x, self.y)
+
+    # def printable_distance(self) -> str:
+    #     if self.best_distance > 1000:
+    #         return "!!"
+    #     else:
+    #         return f"{self.best_distance:02d}"
 
     def __key(self):
         return (self.x, self.y, self.height)
@@ -31,10 +35,6 @@ class MapNode:
         if isinstance(other, MapNode):
             return self.__key() == other.__key()
         return NotImplemented
-
-    # def linkTo(self, m: "MapNode"):
-    #     m.neighbors.add(self)
-    #     self.neighbors.add(m)
 
 
 @dataclass
@@ -94,17 +94,17 @@ def parse_lines(lines: List[str]) -> Map:
     return map
 
 
-def part_one(lines) -> int:
+def shortest_path(map: Map, start_pos: Tuple[int, int], end_pos: Tuple[int, int]):
+    max_distance = 2**16
+    distances = defaultdict(lambda: max_distance)
 
-    map = parse_lines(lines)
-
-    start = map.at(map.start_pos)
-    start.best_distance = 0
-    unvisited = [map.at(map.start_pos)]
+    start_node = map.at(start_pos)
+    distances[start_pos] = 0
+    unvisited = [start_node]
 
     # does equality work
-    assert map.at(map.start_pos) == map.at(map.start_pos)
-    assert map.at(map.start_pos) != map.at(map.end_pos)
+    assert map.at(start_pos) == map.at(start_pos)
+    assert map.at(start_pos) != map.at(end_pos)
 
     while len(unvisited) > 0:
         v = unvisited.pop(0)
@@ -112,43 +112,40 @@ def part_one(lines) -> int:
 
         # print(f"Visiting {v.x}, {v.y}")
         for adj in v.neighbors:
-
+            new_distance = distances[v.pos()] + 1
             # is this a new good edge?
-            if adj.best_distance > v.best_distance + 1:
+            if distances[adj.pos()] > new_distance:
 
-                adj.best_distance = v.best_distance + 1
+                distances[adj.pos()] = new_distance
                 adj.path_back = v
                 unvisited.append(adj)
 
+                # termination condition
                 if adj == map.at(map.end_pos):
-                    return adj.best_distance
+                    return distances[adj.pos()]
 
-    # heights
-    for nodeline in map.nodes:
-        print(" ".join([f"{n.height:02d}" for n in nodeline]))
-    print()
-    # dump final map
-    for nodeline in map.nodes:
-        print(" ".join([n.printable_distance() for n in nodeline]))
+    # raise AssertionError("No path found")
+    # no path found (sus)
+    return max_distance
 
-    assert False
-    # find the length of the path to end
-    # unvisited = start
-    # for each node in unvisited
-    #   visit()
-    # visit:
-    # unvisited += all neighbors
-    # if min_dist < min_dist = dist + 1
-    #   min_dist = dist+1
-    #   path_back = parent
-    #   if we just visited the dest, return distance
 
-    return 0
+def part_one(lines) -> int:
+    map = parse_lines(lines)
+    return shortest_path(map, map.start_pos, map.end_pos)
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    map = parse_lines(lines)
+    # possible_starts = nodes where node.height = start_height
+    starts = [
+        (x, y)
+        for x in range(len(map.nodes[0]))
+        for y in range(len(map.nodes))
+        if map.at((x, y)).height == map.at(map.start_pos).height
+    ]
+    print(f"possible starts = {starts}")
+    shortest_paths = [shortest_path(map, start, map.end_pos) for start in starts]
+    return min(shortest_paths)
 
 
 def main() -> None:
