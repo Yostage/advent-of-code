@@ -38,10 +38,11 @@ class TestDay13(unittest.TestCase):
     def test_part_one(self):
         result = part_one(self.example.splitlines())
         self.assertEqual(result, 13)
+        pass
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, 21)
+        self.assertEqual(result, 140)
 
     def test_compare(self):
         self.assertEqual(compare(1, 3), -1)

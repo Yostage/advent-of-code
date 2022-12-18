@@ -1,26 +1,21 @@
-import functools
-import re
-from dataclasses import dataclass, field
-from functools import cache
-from itertools import zip_longest
+from functools import cmp_to_key
 from math import copysign
-from typing import Any, Dict, List, TypeVar
+from typing import Any, List
 
-from more_itertools import grouper, quantify
+from more_itertools import flatten, grouper
 
 
 def sign(x: int) -> int:
     return 0 if x == 0 else int(copysign(1, x))
 
 
-# def compare(left: Union[List|int], right:Union[List|int])
 def compare(left: List | int, right: List | int) -> int:
     if isinstance(left, int) and isinstance(right, int):
-        # return left < right
         return sign(left - right)
     elif isinstance(left, List) and isinstance(right, List):
         for pair in zip(left, right):
             pairwise = compare(pair[0], pair[1])
+            # print(f"Zipped {pair} = {pairwise}")
             if pairwise != 0:
                 return pairwise
 
@@ -28,7 +23,10 @@ def compare(left: List | int, right: List | int) -> int:
         # every entry in list should be
         return compare(len(left), len(right))
     else:
-        return False
+        if isinstance(left, int):
+            return compare([left], right)
+        else:
+            return compare(left, [right])
 
 
 def parse_lines(lines: List[str]) -> Any:
@@ -41,18 +39,22 @@ def parse_lines(lines: List[str]) -> Any:
 def part_one(lines) -> int:
     pairs = parse_lines(lines)
     results = [compare(left, right) for left, right in pairs]
-    total = 1
+    total = 0
     print(results)
     for idx, result in enumerate(results):
         if result != 1:
-            total *= idx + 1
+            total += idx + 1
     return total
-    # return quantify(results, lambda x: x == -1)
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    pairs = parse_lines(lines)
+    all = list(flatten(pairs))
+    decoder1 = [[2]]
+    decoder2 = [[6]]
+    all += [decoder1, decoder2]
+    all.sort(key=cmp_to_key(compare))
+    return (all.index(decoder1) + 1) * (all.index(decoder2) + 1)
 
 
 def main() -> None:
