@@ -27,12 +27,12 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3"""
         parse_lines(self.example.splitlines())
 
     def test_part_one(self):
-        result = part_one(self.example.splitlines())
-        # self.assertEqual(result, 21)
+        result = part_one(self.example.splitlines(), 10)
+        self.assertEqual(result, 26)
 
     def test_part_two(self):
-        result = part_two(self.example.splitlines())
-        # self.assertEqual(result, 21)
+        result = part_two(self.example.splitlines(), 20)
+        self.assertEqual(result, 56000011)
 
 
 if __name__ == "__main__":
