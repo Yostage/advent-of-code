@@ -109,12 +109,6 @@ def main():
 
     print(part_two(lines))
 
-    # intervalList = [
-    #     input_string_to_intervals(line) for line in file.read().splitlines()
-    # ]
-    # matches = [1 if intervals_overlap(i) else 0 for i in intervalList]
-    # print(sum(matches))
-
 
 if __name__ == "__main__":
     main()
