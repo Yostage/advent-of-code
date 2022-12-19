@@ -1,17 +1,7 @@
-import functools
-import itertools
 import re
-from typing import Iterator, List
+from typing import List, Optional
 
-
-def grouper(iterator: Iterator, n: int) -> Iterator[list]:
-    while chunk := list(itertools.islice(iterator, n)):
-        yield chunk
-
-
-def take(iterable, n):
-    "Return first n items of the iterable as a list"
-    return list(itertools.islice(iterable, n))
+from more_itertools import batched, take
 
 
 def cratelines_to_crates(lines):
@@ -60,7 +50,7 @@ def parse_input(lines: List[str]):
             break
 
     # n.b. splitlines will eliminate the empty line, so we only need to skip the crate counter
-    take(lineiter, 1)
+    take(1, lineiter)
 
     for line in lineiter:
         moves.append(parse_instructions(line))
@@ -69,8 +59,8 @@ def parse_input(lines: List[str]):
 
 
 # parse one line of crate stuff and return a sparse vector of crates
-def parse_crateline(line: str) -> List[str]:
-    middles = [chunk[1] for chunk in grouper(iter(line), 4)]
+def parse_crateline(line: str) -> List[Optional[str]]:
+    middles: List[Optional[str]] = [chunk[1] for chunk in batched(iter(line), 4)]
     middles = [None if m == " " else m for m in middles]
     return middles
 

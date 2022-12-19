@@ -2,7 +2,7 @@ from functools import cmp_to_key
 from math import copysign
 from typing import Any, List
 
-from more_itertools import flatten, grouper
+from more_itertools import batched, flatten
 
 
 def sign(x: int) -> int:
@@ -32,7 +32,7 @@ def compare(left: List | int, right: List | int) -> int:
 def parse_lines(lines: List[str]) -> Any:
     return [
         (eval(pair[0]), eval(pair[1]))
-        for pair in grouper(filter(lambda l: len(l) > 0, lines), 2)
+        for pair in batched(filter(lambda l: len(l) > 0, lines), 2)
     ]
 
 

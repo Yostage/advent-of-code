@@ -1,6 +1,3 @@
-import functools
-import itertools
-from typing import Iterator
 import unittest
 
 from day5 import (
@@ -10,10 +7,6 @@ from day5 import (
     parse_instructions,
     part_one,
     part_two,
-    # input_string_to_intervals,
-    # compare_intervals,
-    # intervals_completely_overlap,
-    # intervals_overlap,
 )
 
 

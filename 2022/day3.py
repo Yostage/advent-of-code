@@ -1,5 +1,6 @@
-import itertools
-from typing import Iterator, List
+from typing import List
+
+from more_itertools import batched
 
 
 def char_to_priority(c: str) -> int:
@@ -43,15 +44,10 @@ def find_shared_priority(compartment_string: str):
     return char_to_priority(shared_elements[0])
 
 
-def grouper(iterator: Iterator, n: int) -> Iterator[list]:
-    while chunk := list(itertools.islice(iterator, n)):
-        yield chunk
-
-
 def main():
     sum = 0
     with open("day3_input.txt", "r") as file:
-        for chunk in grouper(iter(file.read().splitlines()), 3):
+        for chunk in batched(iter(file.read().splitlines()), 3):
             sum += find_shared_badge(chunk)
     print(sum)
 

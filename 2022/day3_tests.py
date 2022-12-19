@@ -1,8 +1,8 @@
-import itertools
-from typing import Iterator
 import unittest
 
-from day3 import char_to_priority, find_shared_priority, find_shared_badge, grouper
+from more_itertools import batched
+
+from day3 import char_to_priority, find_shared_badge, find_shared_priority
 
 
 class TestDay3(unittest.TestCase):
@@ -29,7 +29,7 @@ CrZsJsPPZsGzwwsLwLmpwMDw"""
 
         badges = [
             find_shared_badge(chunk)
-            for chunk in grouper(iter(self.example.splitlines()), 3)
+            for chunk in batched(iter(self.example.splitlines()), 3)
         ]
         self.assertEqual(sum(badges), 70)
 
