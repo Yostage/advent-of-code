@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Dict, Iterable, List, Set, Tuple, TypeVar
 
+import more_itertools
+
 
 class CallCounter(object):
     "Decorator that keeps track of the number of times a function is called."
@@ -270,8 +272,6 @@ def visit(
             days_left=days_left,
         )
 
-        # return (current_score + days_left * flow_rate, visited_next)
-
     return max(child_scores, key=lambda answer: answer[0])
 
 
@@ -360,9 +360,45 @@ def simulate_solution(
     return current_pressure
 
 
-def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+def part_two(lines, days_total=26) -> int:
+    # for every 2-partition of the nodes
+    # give them 26 days to crank and sum the time
+    CallCounter.clear()
+    valves = parse_lines(lines)
+    target_valves = [v.name for v in valves.values() if v.flow_rate != 0]
+    pairs = more_itertools.set_partitions(target_valves, 2)
+
+    result = max(
+        [
+            visit(
+                valves,
+                "AA",
+                flow_rate=0,
+                unvisited=frozenset(pair[0]),
+                visited=("AA",),
+                current_score=0,
+                this_day=0,
+                days_spent=1,
+                days_left=days_total + 1,
+            )[0]
+            + visit(
+                valves,
+                "AA",
+                flow_rate=0,
+                unvisited=frozenset(pair[1]),
+                visited=("AA",),
+                current_score=0,
+                this_day=0,
+                days_spent=1,
+                days_left=days_total + 1,
+            )[0]
+            for pair in pairs
+        ]
+    )
+
+    print(result)
+    print(f"Function calls {CallCounter.counts()} times")
+    return result
 
 
 def main() -> None:
@@ -380,10 +416,10 @@ def main() -> None:
         #         stats = pstats.Stats(pr).sort_stats("cumtime")
         #         stats.print_stats()
 
-        result = part_one(lines)
-        print(result)
+        # result = part_one(lines)
+        # print(result)
         # print(part_one(lines))
-        # print(part_two(lines))
+        print(part_two(lines))
 
 
 if __name__ == "__main__":

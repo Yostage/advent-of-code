@@ -3,9 +3,13 @@ import itertools
 import unittest
 from typing import Iterator
 
-# part_two,
-from day16 import parse_lines  # adjacent_candidates,
-from day16 import bfs_shortest_distance, part_one, simulate_solution
+from day16 import (
+    bfs_shortest_distance,
+    parse_lines,
+    part_one,
+    part_two,
+    simulate_solution,
+)
 
 
 class TestDay16(unittest.TestCase):
@@ -64,7 +68,6 @@ Valve JJ has flow rate=21; tunnel leads to valve II"""
                 valves,
                 canonical_solution,
                 30,
-                verbose=True,
             ),
             1651,
         )
@@ -74,13 +77,13 @@ Valve JJ has flow rate=21; tunnel leads to valve II"""
         self.assertEqual(part_one(self.example.splitlines(), days_total=3)[0], 20)
         result = part_one(self.example.splitlines(), days_total=3)
         self.assertEqual(result[0], 20)
-
-        print(result[1])
+        result = part_one(self.example.splitlines())
+        print(result[0])
         self.assertEqual(result[0], 1651)
 
-    # def test_part_two(self):
-    #     result = part_two(self.example.splitlines())
-    # self.assertEqual(result, 21)
+    def test_part_two(self):
+        result = part_two(self.example.splitlines())
+        self.assertEqual(result, 1707)
 
 
 if __name__ == "__main__":
