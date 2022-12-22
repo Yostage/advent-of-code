@@ -3,6 +3,8 @@ import re
 from collections import deque
 from dataclasses import dataclass, field
 from functools import cache
+from multiprocessing import Pool
+from multiprocessing.pool import IMapUnorderedIterator
 from typing import Any, Dict, Iterable, List, Set, Tuple, TypeVar
 
 import more_itertools
@@ -47,8 +49,7 @@ class CallCounter(object):
 class Valve:
     name: str
     flow_rate: int
-    edge_string: str
-    edges: Set["Valve"]
+    edges: frozenset[str]
 
     def __key(self):
         return (self.name, self.flow_rate)
@@ -71,17 +72,14 @@ def parse_lines(lines: List[str]) -> ValveDict:
         if match := re.search(
             r"Valve (.*) has flow rate=(\d+); tunnels? leads? to valves? (.*)", line
         ):
-            (name, flow, edges) = match.groups()
+            (name, flow, edge_str) = match.groups()
             valves[name] = Valve(
-                name=name, flow_rate=int(flow), edge_string=edges, edges=set()
+                name=name,
+                flow_rate=int(flow),
+                edges=frozenset(edge_str.split(", ")),
             )
         else:
             raise AssertionError(f"could not parse: {line}")
-
-    # hook up all edges
-    for valve in valves.values():
-        for edge in valve.edge_string.split(", "):
-            valve.edges.add(valves[edge])
 
     return valves
 
@@ -90,7 +88,7 @@ def print_graph(v: ValveDict) -> None:
     edges: Set[str] = set()
     for valve in v.values():
         for edge in valve.edges:
-            e = list(sorted([valve.name, edge.name]))
+            e = list(sorted([valve.name, edge]))
             # mermaid
             # edges.add(f"{e[0]} <--> {e[1]}")
             # graphviz
@@ -100,21 +98,7 @@ def print_graph(v: ValveDict) -> None:
         print(edge_str)
 
 
-# at each iteration we can remove nodes from the graph if the graph is still
-# connected without it
-# but what about this one
-# 10-1-1-0-1-1-10
-
-
-# at each point, we will only visit one new node
-# we will visit that node by the cheapest path
-# so that's the recursion
-
-# visits = 0
-
-
 bfs_cache: Dict[Tuple[str, str], int] = {}
-
 
 @CallCounter
 def bfs_shortest_distance(valves: ValveDict, start_at: str, dest: str) -> int:
@@ -133,7 +117,7 @@ def bfs_internal(valves: ValveDict, start_at: str, dest: str) -> int:
 
     while True:
         visiting = queue.popleft()
-        for edge in [e.name for e in valves[visiting].edges]:
+        for edge in valves[visiting].edges:
             if edge == dest:
                 bfs_cache[(start_at, dest)] = distances[visiting] + 1
                 return distances[visiting] + 1
@@ -360,6 +344,27 @@ def simulate_solution(
     return current_pressure
 
 
+def visit_day1(valves, visit_list, days_total):
+    return visit(
+        valves,
+        "AA",
+        flow_rate=0,
+        unvisited=frozenset(visit_list),
+        visited=("AA",),
+        current_score=0,
+        this_day=0,
+        days_spent=1,
+        days_left=days_total + 1,
+    )
+
+
+def test_pair(pair, valves, days_total):
+    return (
+        visit_day1(valves, pair[0], days_total)[0]
+        + visit_day1(valves, pair[1], days_total)[0]
+    )
+
+
 def part_two(lines, days_total=26) -> int:
     # for every 2-partition of the nodes
     # give them 26 days to crank and sum the time
@@ -368,33 +373,17 @@ def part_two(lines, days_total=26) -> int:
     target_valves = [v.name for v in valves.values() if v.flow_rate != 0]
     pairs = more_itertools.set_partitions(target_valves, 2)
 
-    result = max(
-        [
-            visit(
-                valves,
-                "AA",
-                flow_rate=0,
-                unvisited=frozenset(pair[0]),
-                visited=("AA",),
-                current_score=0,
-                this_day=0,
-                days_spent=1,
-                days_left=days_total + 1,
-            )[0]
-            + visit(
-                valves,
-                "AA",
-                flow_rate=0,
-                unvisited=frozenset(pair[1]),
-                visited=("AA",),
-                current_score=0,
-                this_day=0,
-                days_spent=1,
-                days_left=days_total + 1,
-            )[0]
-            for pair in pairs
-        ]
-    )
+    # singleproc
+    # result = max([test_pair(valves, pair, days_total) for pair in pairs])
+
+    # multiproc
+    with Pool(processes=4) as pool:
+        result = max(
+            pool.imap_unordered(
+                functools.partial(test_pair, valves=valves, days_total=days_total),
+                pairs,
+            )
+        )
 
     print(result)
     print(f"Function calls {CallCounter.counts()} times")
