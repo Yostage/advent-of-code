@@ -1,10 +1,7 @@
-from functools import cache
 import re
-from typing import Any, Dict, List, Optional
-
-
 from dataclasses import dataclass, field
-from typing import TypeVar
+from functools import cache
+from typing import Any, Dict, List, Optional, TypeVar
 
 
 @dataclass
@@ -32,7 +29,8 @@ class ElvenDirectory:
             ptr = ptr.parent  # type: ignore
         return "/".join(reversed(tokens))
 
-    @cache
+    # TODO: this blows the stack, why?
+    # @cache
     def get_recursive_size(self) -> int:
         return sum([f.size for f in self.files]) + sum(
             [d.get_recursive_size() for d in self.directories.values()]
@@ -93,6 +91,7 @@ def part_two(lines):
 def main():
     with open("day7_input.txt", "r") as file:
         lines = file.read().splitlines()
+        print(part_one(lines))
         print(part_two(lines))
 
 
