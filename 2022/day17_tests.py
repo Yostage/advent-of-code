@@ -5,7 +5,7 @@ from typing import Iterator
 
 from more_itertools import first
 
-from day17 import Rock, Tetris, parse_lines, part_one, part_two
+from day17 import Rock, Tetris, parse_lines, part_one, part_one_generator, part_two
 
 
 class TestDay17(unittest.TestCase):
@@ -27,34 +27,19 @@ class TestDay17(unittest.TestCase):
         parse_lines(self.example.splitlines())
 
     def test_part_one(self):
-        result = part_one(self.example.splitlines(), 1)
-        self.assertEqual(result, 1)
-        result = part_one(self.example.splitlines(), 2)
-        self.assertEqual(result, 4)
-        result = part_one(self.example.splitlines(), 3)
-        self.assertEqual(result, 6)
-        result = part_one(self.example.splitlines(), 4)
-        self.assertEqual(result, 7)
-        result = part_one(self.example.splitlines(), 5)
-        self.assertEqual(result, 9)
-        result = part_one(self.example.splitlines(), 6)
-        self.assertEqual(result, 10)
-        result = part_one(self.example.splitlines(), 7)
-        self.assertEqual(result, 13)
-        result = part_one(self.example.splitlines(), 8)
-        self.assertEqual(result, 15)
-        result = part_one(self.example.splitlines(), 9)
-        self.assertEqual(result, 17)
-        result = part_one(self.example.splitlines(), 10)
-        self.assertEqual(result, 17)
+        self.assertListEqual(
+            list(itertools.islice(part_one_generator(self.example.splitlines()), 11)),
+            [0, 1, 4, 6, 7, 9, 10, 13, 15, 17, 17],
+        )
 
-        # result = part_one(self.example.splitlines())
-        # self.assertEqual(result, 3068)
+        result = part_one(self.example.splitlines())
+        self.assertEqual(result, 3068)
+
         pass
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 1514285714288)
 
 
 if __name__ == "__main__":

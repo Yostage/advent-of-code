@@ -4,7 +4,9 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cache
-from typing import Any, Dict, Iterable, List, TypeVar
+from typing import Any, Dict, Generator, Iterable, Iterator, List, TypeVar
+
+import more_itertools
 
 from day15 import Point2D
 
@@ -110,7 +112,9 @@ def render(tet: Tetris) -> None:
     print()
 
 
-def part_one(lines: List[str], count_rocks: int = 2022) -> int:
+def part_one_generator(
+    lines: List[str],
+) -> Generator[int, None, None]:
     jet_sequence = parse_lines(lines)
 
     jets = itertools.cycle(jet_sequence)
@@ -118,8 +122,11 @@ def part_one(lines: List[str], count_rocks: int = 2022) -> int:
     offsets = {">": (1, 0), "<": (-1, 0)}
 
     tet = Tetris()
-    rocks_dropped = 0
-    for _ in range(count_rocks):
+
+    # the 0th rock is 0
+    yield 0
+
+    while True:
         rock_index = next(rock_indexes)
         r = Rock((3, tet.top_rock + 4), rock_index)
 
@@ -148,14 +155,76 @@ def part_one(lines: List[str], count_rocks: int = 2022) -> int:
                 # and stop
                 break
 
-    # after 2022 rocks have fallen. what's the tallest space?
-    # render(tet)
-    return tet.top_rock
+        # render(tet)
+        yield tet.top_rock
 
 
-def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+def part_one(lines: List[str], count_rocks: int = 2022) -> int:
+    return next(itertools.islice(part_one_generator(lines), count_rocks, None))
+
+
+# thanks stackoverflow
+def guess_seq_len(seq):
+    guess = 1
+    max_len = len(seq) // 2
+    for x in range(20, 5000, 5):
+        if seq[0:x] == seq[x : 2 * x]:
+            return x
+    return guess
+
+
+def part_two(lines, drops: int = 1000000000000) -> int:
+    it = part_one_generator(lines)
+    pairs = itertools.pairwise(it)
+    deltas = map(lambda pair: pair[1] - pair[0], pairs)
+
+    chonk = 20000
+    chonky = list(more_itertools.take(chonk, deltas))
+    heights = list(more_itertools.take(chonk, part_one_generator(lines)))
+
+    for offset in range(chonk // 2):
+        cycle_length = guess_seq_len(chonky[offset:])
+        if cycle_length == 1:
+            continue
+        print(f"At offset {offset} found sequence of length {cycle_length}")
+        break
+
+    height_cycle = chonky[offset : offset + cycle_length]
+    last_height = heights[offset]
+
+    def predict_height(index: int) -> int:
+        # we're before the repeat
+        if index < offset:
+            return heights[index]
+
+        delta_past_slice = index - offset
+        count_cycles = delta_past_slice // cycle_length
+        cycle_index = delta_past_slice % cycle_length
+        return (
+            last_height
+            + count_cycles * sum(height_cycle)
+            + sum(height_cycle[:cycle_index])
+        )
+        # max height, plus the sum of cycles
+        # plus the sum of the offsets into the cycle
+
+    def test_prediction(index: int) -> bool:
+        expected = heights[index]
+        actual = predict_height(index)
+        if expected != actual:
+            print(
+                f"predict={index}. algorithm={predict_height(index)} reality={heights[index]}"
+            )
+            return False
+        return True
+
+    assert test_prediction(1)
+    assert test_prediction(10)
+    assert test_prediction(10000)
+    for x in [offset - 2, offset - 1, offset, offset + 1, offset + 2]:
+        assert test_prediction(x)
+
+    return predict_height(drops)
 
 
 def main() -> None:
