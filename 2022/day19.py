@@ -158,13 +158,10 @@ def find_max_score(bp: Blueprint, minutes: int) -> int:
             ):
                 robot_budgets[0] = 0
 
-        # there are five moves we could make
         options_tested = 0
         for cmd_index in (3, 2, 1, 0):
             command = commands[cmd_index]
             tomorrow = copy.copy(today)
-            # todo cleanup
-            # tomorrow.movestring += command
 
             # we don't even want any more of this robot
             if cmd_index in (0, 1, 2) and robot_budgets[cmd_index] <= 0:
@@ -176,61 +173,27 @@ def find_max_score(bp: Blueprint, minutes: int) -> int:
                 continue
             if cmd_index == 3 and today.robots[2] == 0:
                 continue
-            # production_check
-            # days_needed = todo
             # don't ever sleep away the last day (we need it to count score)
-            # days_remaining = (tomorrow.minute_finished - minutes) - 1
 
-            # if we made it, then do build the robot
-            # spend the money
-            # retroactive_mats = tuple4_add(bp.costs[cmd_index], start_of_day_mats)  # type: ignore
-
-            # sleep until we have enough or we run out of days
-            # print(
-            #     f"Iteration {count_iterations}. Queue depth {len(queue)}. Max score {max_geodes}. Processing day ={today.minute_finished+1}"
-            # )
-            # print(
-            #     f"robots: {today.robots} mats = {today.mats} moves = {today.movestring}"
-            # )
-
-            # print(f"Attempting to build {command}")
             retroactive_mats = start_of_day_mats
             while (
                 any(
                     map(
                         lambda m: m < 0,
-                        # map(sum, zip(bp.costs[cmd_index], start_of_day_mats)),
                         tuple4_add(bp.costs[cmd_index], retroactive_mats),  # type: ignore
                     )
                 )
                 and tomorrow.minute_finished < minutes - 1
             ):
-                # print(f"sleeping..")
-                # spend a day
                 # inject the sleeps: increment mats, increment clock, increment movestring
                 tomorrow.mats = tuple4_add(today.robots, tomorrow.mats)
                 retroactive_mats = tuple4_add(today.robots, retroactive_mats)
                 tomorrow.minute_finished += 1
                 tomorrow.movestring += "."
-            # print("Done")
-            # while any(map(lambda m: m < 0, retroactive_mats)) and tomorrow.minute_finished < minutes-1:
 
-            # pass
-
-            # ok, how many days would it take at this rate
-            # if our production is offline, don't even sleep
-            # if we don't have enough days, just inject enough
-            # sleeps so that the last day runs
-            # if we do have enough days, inject enough sleeps
-            # to get us t
-            # do we have enough days to inject sleeps?
-            # continue
-            # if we were able to sleep enough days, go for it
-            # if days_needed <= days_remaining:
             if all(
                 map(
                     lambda m: m >= 0,
-                    # map(sum, zip(bp.costs[cmd_index], start_of_day_mats)),
                     tuple4_add(bp.costs[cmd_index], retroactive_mats),  # type: ignore
                 )
             ):
@@ -243,15 +206,11 @@ def find_max_score(bp: Blueprint, minutes: int) -> int:
                     (n + 1 if i == cmd_index else n for i, n in enumerate(today.robots))
                 )  # type:ignore
             else:
-                # print("We slept too long and couldn't build the robot")
                 tomorrow.movestring += "."
 
             # ship it
             queue.append(tomorrow)
             options_tested += 1
-            # only test the best two options
-            # if options_tested == 2:
-            # break
 
     print(
         f"Terminating after {count_iterations} with best score {max_geodes} example [{best_move}]"
@@ -311,13 +270,20 @@ def part_one(lines) -> int:
 
 def part_two(lines) -> int:
     parse_lines(lines)
+    bps = parse_lines(lines)
+    total_quality = 1
+    for idx, bp in enumerate(bps[:3]):
+        score = find_max_score(bp, 32)
+        total_quality *= score
+    return total_quality
+
     return 0
 
 
 def main() -> None:
     with open("day19_input.txt", "r") as file:
         lines = file.read().splitlines()
-        print(part_one(lines))
+        # print(part_one(lines))
         print(part_two(lines))
 
 
