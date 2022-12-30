@@ -50,31 +50,27 @@ def parse_lines(lines: List[str]) -> Dict[str, Yell]:
     # hook up all the edges
     for yell in yells.values():
         if yell.literal is None:
-            # print(f"Yell {yell.name} had children")
             yell.left = yells[yell.l]  # type: ignore
             yell.right = yells[yell.r]  # type: ignore
-            # print(f"Hooked up l={yell.left} and r={yell.right}")
 
     return yells
 
 
 def part_one(lines) -> int:
     yells = parse_lines(lines)
-    for l in list(top_down_execution(yells, yells["root"])):
+    for l in list(postorder_to_python(yells, yells["root"])):
         # print(l)
         exec(l)
     return eval("root")
-    # return 0
 
 
-def top_down_execution(yells: YellDict, yell: Yell) -> Generator[str, None, None]:
-    # traverse the tree in preorder
-    # print it out in reverse
+def postorder_to_python(yells: YellDict, yell: Yell) -> Generator[str, None, None]:
+    # postorder traversal so we will get all the roots first
     print(f"Visiting {yell.name}")
     if yell.left is not None:
-        yield from top_down_execution(yells, yell.left)
+        yield from postorder_to_python(yells, yell.left)
     if yell.right is not None:
-        yield from top_down_execution(yells, yell.right)
+        yield from postorder_to_python(yells, yell.right)
     yield yell.as_python()
 
 
