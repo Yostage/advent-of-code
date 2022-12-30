@@ -105,15 +105,26 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    nums = parse_lines(lines)
+
+    # one premultiply by the key
+    for num in nums:
+        num.val *= 811589153
+
+    # ten mixes
+    for _ in range(10):
+        for num in nums:
+            mix(num, nums)
+
+    zero_pos = find_val(0, nums)
+    return sum((val_at_pos(offset + zero_pos, nums) for offset in [1000, 2000, 3000]))
 
 
 def main() -> None:
     with open("day20_input.txt", "r") as file:
         lines = file.read().splitlines()
         print(part_one(lines))
-        # print(part_two(lines))
+        print(part_two(lines))
 
 
 if __name__ == "__main__":
