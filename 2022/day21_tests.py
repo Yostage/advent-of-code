@@ -33,7 +33,7 @@ hmdt: 32"""
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 301)
 
 
 if __name__ == "__main__":
