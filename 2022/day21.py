@@ -56,12 +56,16 @@ def parse_lines(lines: List[str]) -> Dict[str, Yell]:
     return yells
 
 
-def part_one(lines) -> int:
-    yells = parse_lines(lines)
-    for l in list(postorder_to_python(yells, yells["root"])):
+def eval_from_root(yells: YellDict, root_node_name: str):
+    for l in list(postorder_to_python(yells, yells[root_node_name])):
         # print(l)
         exec(l)
-    return eval("root")
+    return eval(root_node_name)
+
+
+def part_one(lines) -> int:
+    yells = parse_lines(lines)
+    return eval_from_root(yells, "root")
 
 
 def postorder_to_python(yells: YellDict, yell: Yell) -> Generator[str, None, None]:
