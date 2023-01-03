@@ -27,8 +27,8 @@ class TestDay24(unittest.TestCase):
         parse_lines(self.example.splitlines())
 
     def test_part_one(self):
-        result = part_one(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        result = part_one(self.example2.splitlines())
+        self.assertEqual(result, 18)
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
