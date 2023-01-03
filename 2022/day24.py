@@ -6,6 +6,9 @@ from functools import cache
 from itertools import count
 from typing import Any, DefaultDict, Dict, List, Set, TypeVar
 
+import colorama
+from colorama import Fore, Style
+
 from day15 import Point2D
 from day22 import tuple2_add
 
@@ -85,6 +88,10 @@ class BlizzardMap:
 
     def test_empty(self, loc: Point2D) -> bool:
 
+        # another hack, the doorways are open
+        if loc == (1, 0) or loc == (self.wall_right - 1, self.wall_down):
+            return True
+
         # hack: don't let us walk back out the top
         if loc[1] < 0:
             return False
@@ -108,13 +115,17 @@ class BlizzardMap:
         def char_at_square(pos: Point2D) -> str:
             if pos in self.blizzards:
                 bliz = self.blizzards[pos]
-                return bliz[0] if len(bliz) == 1 else str(len(bliz))
+                return (
+                    (Fore.RED + bliz[0])
+                    if len(bliz) == 1
+                    else (Fore.RED + str(len(bliz)))
+                )
 
             if pos in self.reachable:
-                return "*"
+                return Fore.GREEN + "*"
 
             if self.test_empty(pos):
-                return "."
+                return Style.RESET_ALL + "."
             assert False
 
         # first square
@@ -122,14 +133,16 @@ class BlizzardMap:
         print("#." + ("#" * (self.wall_right - 1)))
         for y in range(self.wall_up + 1, self.wall_down):
             print(
-                "#"
+                Style.RESET_ALL
+                + "#"
                 + "".join(
                     char_at_square((x, y))
                     for x in range(self.wall_left + 1, self.wall_right)
                 )
+                + Style.RESET_ALL
                 + "#"
             )
-        print(("#" * (self.wall_right - 1)) + ".#")
+        print((Style.RESET_ALL + "#" * (self.wall_right - 1)) + ".#")
 
 
 def parse_lines(lines: List[str]) -> BlizzardMap:
@@ -158,15 +171,38 @@ def part_one(lines) -> int:
             b.render()
         # if we run out of spaces we're dead forever
         assert len(b.reachable) > 0
-        if (b.wall_right - 1, b.wall_down - 1) in b.reachable:
+
+        if (b.wall_right - 1, b.wall_down) in b.reachable:
             # it would take one more round to walk out
-            return round + 1
+            return round
 
     return 0
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
+    b = parse_lines(lines)
+    b.render()
+    state = 0
+    for round in count(1):
+        b.move_blizzards()
+        b.advance_reachable()
+        if round % 10 == 1:
+            b.render()
+        # if we run out of spaces we're dead forever
+        assert len(b.reachable) > 0
+
+        if state == 0:
+            if (b.wall_right - 1, b.wall_down) in b.reachable:
+                state = 1
+                b.reachable = set([(b.wall_right - 1, b.wall_down)])
+        elif state == 1:
+            if (1, 0) in b.reachable:
+                state = 2
+                b.reachable = set([(1, 0)])
+        elif state == 2:
+            if (b.wall_right - 1, b.wall_down) in b.reachable:
+                return round
+
     return 0
 
 
@@ -178,4 +214,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    colorama.just_fix_windows_console()
     main()
