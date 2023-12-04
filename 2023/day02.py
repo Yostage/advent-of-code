@@ -39,8 +39,14 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    def get_game_power(game) -> int:
+        red = max([subset.get("red", 0) for subset in game])
+        green = max([subset.get("green", 0) for subset in game])
+        blue = max([subset.get("blue", 0) for subset in game])
+        return red * green * blue
+
+    games = parse_lines(lines)
+    return sum(get_game_power(game) for game in games)
 
 
 def main() -> None:
