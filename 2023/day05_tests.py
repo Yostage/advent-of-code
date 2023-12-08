@@ -42,11 +42,12 @@ humidity-to-location map:
 56 93 4"""
 
     def test_parse_lines(self):
-        parse_lines(self.example.splitlines())
+        maps = parse_lines(self.example.splitlines())
+        print(maps)
 
     def test_part_one(self):
         result = part_one(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 35)
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
