@@ -23,7 +23,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"""
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 30)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import functools
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Dict, List, Set, TypeVar
@@ -26,6 +27,7 @@ def parse_lines(lines: List[str]) -> List[ScratchCard]:
 
 def part_one(lines) -> int:
     cards = parse_lines(lines)
+
     total = 0
     for card in cards:
         match_count = sum(1 for x in card.numbers if x in card.winners)
@@ -36,8 +38,19 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    cards = parse_lines(lines)
+
+    multipliers = {x: 1 for x in range(len(cards))}
+
+    for idx, card in enumerate(cards):
+        match_count = sum(1 for x in card.numbers if x in card.winners)
+
+        # the next m cards get a boost, multiplied by how many we already are at this rank
+        for win in range(match_count):
+            multipliers[idx + 1 + win] += multipliers[idx]
+
+    # print(multipliers)
+    return sum(multipliers.values())
 
 
 def main() -> None:
