@@ -31,8 +31,16 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    races = parse_lines(lines)
+    # oops all kerning
+    time = int("".join([str(r[0]) for r in races]))
+    distance = int("".join([str(r[1]) for r in races]))
+    wins = 0
+    # i think we could binary search this?
+    for time_held in range(time):
+        if time_held * (time - time_held) > distance:
+            wins += 1
+    return wins
 
 
 def main() -> None:
