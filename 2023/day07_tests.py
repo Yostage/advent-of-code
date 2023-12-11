@@ -22,7 +22,7 @@ QQQJA 483"""
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 5905)
 
 
 if __name__ == "__main__":
