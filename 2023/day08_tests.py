@@ -30,7 +30,7 @@ ZZZ = (ZZZ, ZZZ)"""
     def test_part_one(self):
         result = part_one(self.example.splitlines())
         self.assertEqual(result, 2)
-        self.assertEqual(part_one(self.example2.splitlines(), 6))
+        self.assertEqual(part_one(self.example2.splitlines()), 6)
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
