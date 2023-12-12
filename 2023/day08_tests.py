@@ -24,6 +24,17 @@ AAA = (BBB, BBB)
 BBB = (AAA, ZZZ)
 ZZZ = (ZZZ, ZZZ)"""
 
+    example3 = """LR
+
+11A = (11B, XXX)
+11B = (XXX, 11Z)
+11Z = (11B, XXX)
+22A = (22B, XXX)
+22B = (22C, 22C)
+22C = (22Z, 22Z)
+22Z = (22B, 22B)
+XXX = (XXX, XXX)"""
+
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
 
@@ -33,8 +44,8 @@ ZZZ = (ZZZ, ZZZ)"""
         self.assertEqual(part_one(self.example2.splitlines()), 6)
 
     def test_part_two(self):
-        result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        result = part_two(self.example3.splitlines())
+        self.assertEqual(result, 6)
 
 
 if __name__ == "__main__":
