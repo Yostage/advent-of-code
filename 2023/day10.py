@@ -9,10 +9,10 @@ from util import Point2D, tuple2_add
 
 adjacencies = {
     "|": ((0, 1), (0, -1)),
-    "-": ((1, 0), (-1, 0)),
+    "-": ((-1, 0), (1, 0)),
     "L": ((0, -1), (1, 0)),
     "J": ((0, -1), (-1, 0)),
-    "7": ((0, 1), (-1, 0)),
+    "7": ((-1, 0), (0, 1)),
     "F": ((0, 1), (1, 0)),
     ".": tuple(),
 }
@@ -42,12 +42,21 @@ def parse_lines(lines: List[str]) -> Any:
                 map[(x, y)] = [tuple2_add((x, y), adj) for adj in adjacencies[c]]
     assert start is not None
 
+    graphical_map = {
+        (x, y): c for y, line in enumerate(lines) for x, c in enumerate(line)
+    }
+
     # calculate the shape of our starting place
+    exits = []
     for orthogonal_dir in orthogonal_adjacencies:
         # backlink to anybody who links to us
         adjacent_space = tuple2_add(start, orthogonal_dir)
         if adjacent_space in map and start in map[adjacent_space]:
             map[start].append(adjacent_space)
+            exits.append(orthogonal_dir)
+    # reverse engineer our shape based on our adjacencies
+    inv_map = {v: k for k, v in adjacencies.items()}
+    graphical_map[start] = inv_map[tuple(sorted(exits))]
 
     # better be only two links out
     assert len(map[start]) == 2
@@ -55,9 +64,7 @@ def parse_lines(lines: List[str]) -> Any:
     return PipeMaze(
         start=start,
         map=map,
-        graphical_map={
-            (x, y): c for y, line in enumerate(lines) for x, c in enumerate(line)
-        },
+        graphical_map=graphical_map,
     )
 
 
@@ -108,13 +115,6 @@ def part_two(lines) -> int:
     visited: Set[Point2D] = set()
     inside_edges: Dict[Point2D, Set[Point2D]] = defaultdict(lambda: set())
 
-    # def pretty_cell(x, y, visiting):
-    #     if distances[(x, y)] == max_int:
-    #         return "."
-    #     if (x, y) == visiting:
-    #         return "*"
-    #     return str(distances[(x, y)])
-
     # visit the whole loop
     while len(unvisited) > 0:
         visiting = unvisited.pop()
@@ -124,67 +124,47 @@ def part_two(lines) -> int:
             if adjacent not in visited and adjacent not in unvisited:
                 unvisited.appendleft(adjacent)
 
-    def flood_fill(start: Point2D) -> None:
-        visit_queue: Deque = deque([start])
-        # visit_queue.append(start)
-        visited: Set[Point2D] = set()
-        assert maze.graphical_map[start] == "."
-        leaked = False
-        logged = {(2, 6), (3, 6)}
-        while len(visit_queue) > 0:
-            visiting = visit_queue.pop()
-            visited.add(visiting)
+    def mark_inside(loc: Point2D) -> None:
+        ray_trace = "".join(
+            [
+                # all the pipe segments
+                maze.graphical_map[(loc[0], y)]
+                # from where we are up to y=0
+                for y in range(loc[1], -1, -1)
+                # only intersect things on the path
+                if distances[(loc[0], y)] != max_int
+            ]
+        )
+        # we're going vertically, so we only care about horizontal intersects
+        ray_trace = ray_trace.replace("|", "")
+        # these two sequences turn into a horizontal intersect
+        # they will be sequential since we've already removed the vertical pipes
+        ray_trace = ray_trace.replace("JF", "-")
+        ray_trace = ray_trace.replace("L7", "-")
 
-            for adjacent in [
-                tuple2_add(visiting, adj) for adj in orthogonal_adjacencies
-            ]:
-                if (
-                    adjacent in maze.graphical_map
-                    and maze.graphical_map[adjacent] == "."
-                ):
-                    if adjacent not in visit_queue and adjacent not in visited:
-                        visit_queue.appendleft(adjacent)
-                # off the map
-                elif adjacent not in maze.graphical_map:
-                    leaked = True
-                    if visiting in logged:
-                        print(
-                            f"Marking leak on {visiting} because {adjacent} not in map"
-                        )
-                # not in the loop
-                elif distances[adjacent] == max_int:
-                    if visiting in logged:
-                        print(
-                            f"Marking leak on {visiting} because {adjacent} not in loop"
-                        )
-                    leaked = True
-        # execute flood fill
-        for loc in visited:
-            # if leaked:
-            #     print(f"Marking {loc} outside")
-            # else:
-            #     print(f"marking {loc} inside")
-            maze.graphical_map[loc] = "O" if leaked else "I"
+        # odd number of intersections means inside
+        if (len(ray_trace) % 2) == 1:
+            maze.graphical_map[loc] = "I"
+        else:
+            maze.graphical_map[loc] = "O"
 
-    while unflooded := next(
-        (loc for loc in maze.graphical_map if maze.graphical_map[loc] == "."), None
+    while unmarked := next(
+        (
+            loc
+            for loc in maze.graphical_map
+            if distances[loc] == max_int and maze.graphical_map[loc] not in ("I", "O")
+        ),
+        None,
     ):
-        flood_fill(unflooded)
+        mark_inside(unmarked)
 
     def render_visited(loc: Point2D):
-        if loc in {(2, 6), (3, 6)}:
-            # if loc == (3, 7):
-            # print(f"{loc} distance = {distances[loc]}")
-            return "X"
         if distances[loc] != max_int:
             return "*"
         else:
             return "."
 
     def render(loc: Point2D):
-        # if distances[loc] != max_int:
-        #     return "*"
-        # else:
         return maze.graphical_map[loc]
 
     print()
@@ -195,9 +175,6 @@ def part_two(lines) -> int:
     for y in range(len(lines)):
         print("".join([render((x, y)) for x in range(len(lines[0]))]))
     print()
-
-    # for y in range(len(lines)):
-    #     print("".join([pretty_cell(x, y, (-1, -1)) for x in range(len(lines[0]))]))
 
     return sum([1 for cell in maze.graphical_map.values() if cell == "I"])
 

@@ -91,6 +91,14 @@ F--7F--7
 L--S---J"""
     )
 
+    example9 = dedent(
+        """\
+..F7..
+F-JL-7
+|.||.|
+LS---J"""
+    )
+
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
 
@@ -100,12 +108,13 @@ L--S---J"""
         self.assertEqual(part_one(self.example2.splitlines()), 8)
 
     def test_part_two(self):
-        # self.assertEqual(part_two(self.example3.splitlines()), 4)
-        # self.assertEqual(part_two(self.example4.splitlines()), 4)
-        # self.assertEqual(part_two(self.example5.splitlines()), 8)
-        # self.assertEqual(part_two(self.example6.splitlines()), 10)
-        self.assertEqual(part_two(self.example7.splitlines()), 10)
-        self.assertEqual(part_two(self.example8.splitlines()), 4)
+        self.assertEqual(part_two(self.example3.splitlines()), 4)
+        self.assertEqual(part_two(self.example4.splitlines()), 4)
+        self.assertEqual(part_two(self.example5.splitlines()), 8)
+        self.assertEqual(part_two(self.example6.splitlines()), 10)
+        self.assertEqual(part_two(self.example7.splitlines()), 4)
+        self.assertEqual(part_two(self.example8.splitlines()), 0)
+        self.assertEqual(part_two(self.example9.splitlines()), 4)
 
 
 if __name__ == "__main__":
