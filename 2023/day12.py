@@ -1,8 +1,8 @@
-import functools
 import re
-from dataclasses import dataclass, field
 from functools import cache
-from typing import Any, Dict, Iterable, List, Tuple, TypeVar
+from typing import List, Tuple
+
+from util import CallCounter
 
 
 def parse_lines(lines: List[str]) -> List[Tuple[str, List[int]]]:
@@ -14,7 +14,9 @@ def parse_lines(lines: List[str]) -> List[Tuple[str, List[int]]]:
     return ret
 
 
-def how_many_legal(springs: str, segments: List[int]) -> int:
+@cache
+@CallCounter
+def how_many_legal(springs: str, segments: Tuple[int]) -> int:
     # base case
     if len(segments) == 0:
         if "#" in springs:
@@ -116,10 +118,8 @@ def part_one(lines) -> int:
     for springs, segments in data:
         # runs = springs_to_runs(springs)
         # answer = how_many_legal(runs, segments)
-        answer = how_many_legal(springs, segments)
-        print(
-            f"{springs} : {','.join([str(s) for s in segments])} : {how_many_legal(springs, segments)}"
-        )
+        answer = how_many_legal(springs, tuple(segments))
+        print(f"{springs} : {','.join([str(s) for s in segments])} : {answer}")
         sum += answer
 
     return sum
@@ -134,6 +134,8 @@ def main() -> None:
     with open("day12_input.txt", "r") as file:
         lines = file.read().splitlines()
         print(part_one(lines))
+        print(CallCounter.counts())
+        CallCounter.clear()
         print(part_two(lines))
 
 
