@@ -1,5 +1,6 @@
 import re
 from functools import cache
+from itertools import chain, repeat
 from typing import List, Tuple
 
 from util import CallCounter
@@ -46,78 +47,10 @@ def how_many_legal(springs: str, segments: Tuple[int]) -> int:
     return sum
 
 
-# def how_many_legal(runs, segments) -> int:
-#     # base case: we've placed all the segments
-#     if len(segments) == 0:
-#         # this is legal
-#         return 1
-#     # we always want to try to consume the first segment
-
-#     sum = 0
-#     runs = runs.copy()
-
-#     while len(runs) > 0:
-#         # completely skip runs of fixed springs, we can't use them
-#         if runs[0][0] == ".":
-#             runs.pop(0)
-#             continue
-
-#         # this is a broken run. We have to use it, or else this state is illegal
-#         if runs[0][0] == "#":
-#             # illegal state, we cannot place the next segment
-#             if runs[0][1] != segments[0]:
-#                 return 0
-#             # legal state, we must use the next segment, and we do not fork
-#             return how_many_legal(runs[1:], segments[1:])
-
-#         assert runs[0][0] == "?"
-
-#         # the case where we don't use it at all, which consumes no segments
-#         sum += how_many_legal(runs[1:], segments)
-#         for skip in range(segments[0], runs[0][1]):
-#             remaining_run
-#             sum += how_many_legal(, segments[1:])
-
-#     return sum
-#     # now
-
-#     # for each remaining unknown spring_interval
-#     # there are zero or more ways to consume it
-#     # don't forget to calculate if we need to terminate it as well
-#     # find all the places that we can put this first segment, including adding a
-#     # terminator after it
-
-#     # then we memoize
-#     # then we multiprocess
-#     return 7
-
-
-# def springs_to_runs(springs: str) -> List[Tuple[str, int]]:
-#     ret: List[Tuple[str, int]] = []
-#     run_length = 0
-#     current_char = "X"
-#     for c in springs:
-#         if c != current_char:
-#             # new interval
-#             # skip first interval ever
-#             if current_char != "X":
-#                 ret.append((current_char, run_length))
-#             current_char = c
-#             run_length = 1
-#         else:
-#             run_length += 1
-#     # close the dangling interval
-#     ret.append((current_char, run_length))
-
-#     return ret
-
-
 def part_one(lines) -> int:
     data = parse_lines(lines)
     sum = 0
     for springs, segments in data:
-        # runs = springs_to_runs(springs)
-        # answer = how_many_legal(runs, segments)
         answer = how_many_legal(springs, tuple(segments))
         print(f"{springs} : {','.join([str(s) for s in segments])} : {answer}")
         sum += answer
@@ -126,8 +59,16 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    data = parse_lines(lines)
+    sum = 0
+    for springs, segments in data:
+        springs = "?".join(repeat(springs, 5))
+        segments = list(chain.from_iterable(repeat(segments, 5)))
+        answer = how_many_legal(springs, tuple(segments))
+        print(f"{springs} : {','.join([str(s) for s in segments])} : {answer}")
+        sum += answer
+
+    return sum
 
 
 def main() -> None:
@@ -137,6 +78,7 @@ def main() -> None:
         print(CallCounter.counts())
         CallCounter.clear()
         print(part_two(lines))
+        print(CallCounter.counts())
 
 
 if __name__ == "__main__":
