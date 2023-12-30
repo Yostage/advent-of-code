@@ -24,7 +24,8 @@ class TestDay13(unittest.TestCase):
 #....#..#"""
 
     def test_parse_lines(self):
-        parse_lines(self.example.splitlines())
+        maps = parse_lines(self.example.splitlines())
+        self.assertEqual(len(maps), 2)
 
     def test_part_one(self):
         result = part_one(self.example.splitlines())
