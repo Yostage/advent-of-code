@@ -9,6 +9,14 @@ def tuple2_add(a: Point2D, b: Point2D) -> Point2D:
     return tuple(map(sum, zip(a, b)))  # type: ignore
 
 
+def tuple2_scalar_mul(a: Point2D, b: int) -> Point2D:
+    return tuple([b * x for x in a])  # type: ignore
+
+
+def tuple2_mul(a: Point2D, b: Point2D) -> Point2D:
+    return (a[0] * b[0], a[1] * b[1])
+
+
 # 2022.15
 def manhattan_distance(a: Point2D, b: Point2D) -> int:
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
