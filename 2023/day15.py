@@ -5,13 +5,22 @@ from functools import cache
 from typing import Any, Dict, List, TypeVar
 
 
-def parse_lines(lines: List[str]) -> Any:
-    return None
+def parse_lines(lines: List[str]) -> List[str]:
+    return lines[0].split(",")
+
+
+def hash_1(token: str) -> int:
+    acc = 0
+    for c in token:
+        acc += ord(c)
+        acc *= 17
+        acc %= 256
+    return acc
 
 
 def part_one(lines) -> int:
-    parse_lines(lines)
-    return 0
+    tokens = parse_lines(lines)
+    return sum(hash_1(token) for token in tokens)
 
 
 def part_two(lines) -> int:
@@ -28,4 +37,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
