@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Deque, Dict, List, Mapping, Sequence, Set, TypeVar
 
+from CharacterGrid import orthogonal_adjacencies
 from util import Point2D, tuple2_add
 
 adjacencies = {
@@ -25,7 +26,7 @@ class PipeMaze:
     graphical_map: Mapping[Point2D, str]
 
 
-orthogonal_adjacencies = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+# orthogonal_adjacencies = [(1, 0), (0, 1), (-1, 0), (0, -1)]
 max_int = 99999999999
 
 

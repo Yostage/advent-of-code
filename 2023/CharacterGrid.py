@@ -5,6 +5,8 @@ from util import Point2D
 
 CharacterGrid2D = Dict[Point2D, str]
 
+orthogonal_adjacencies = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+
 
 class CharacterGrid:
     map: CharacterGrid2D
