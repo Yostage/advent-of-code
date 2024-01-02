@@ -1,12 +1,8 @@
-import functools
-import re
-from ast import Lambda
 from collections import deque
-from dataclasses import dataclass, field
-from functools import cache
-from typing import Any, Callable, Deque, Dict, Iterable, List, Set, Tuple, TypeVar
+from itertools import chain
+from typing import Callable, Deque, Dict, List, Set, Tuple
 
-from CharacterGrid import CharacterGrid, orthogonal_adjacencies
+from CharacterGrid import CharacterGrid
 from util import Point2D, tuple2_add
 
 
@@ -30,7 +26,7 @@ def v_splitter(in_dir: Point2D) -> List[Point2D]:
         return [(0, 1), (0, -1)]
 
 
-# for each piece and your incoming direction, we tell you the translations and directions to go next
+# given an input direction and a square, which directions do we go to
 bounce_map: Dict[str, Callable[[Point2D], List[Point2D]]] = {
     "\\": lambda x: [(x[1], x[0])],
     "/": lambda x: [(-x[1], -x[0])],
@@ -40,12 +36,9 @@ bounce_map: Dict[str, Callable[[Point2D], List[Point2D]]] = {
 }
 
 
-def part_one(lines) -> int:
-    grid = parse_lines(lines)
-    start_pos = (0, 0)
-    start_dir = (1, 0)
+def count_lit(grid, start_pos, start_dir) -> int:
     visit_queue: Deque[Tuple[Point2D, Point2D]] = deque([(start_pos, start_dir)])
-    lit: Set[Point2D] = set([(0, 0)])
+    lit: Set[Point2D] = set()
     loop: Set[Tuple[Point2D, Point2D]] = set()
 
     while len(visit_queue) > 0:
@@ -70,9 +63,22 @@ def part_one(lines) -> int:
     return len(lit)
 
 
+def part_one(lines) -> int:
+    grid = parse_lines(lines)
+    return count_lit(grid, (0, 0), (1, 0))
+
+
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    grid = parse_lines(lines)
+    tops = [count_lit(grid, (x, 0), (0, 1)) for x in range(0, grid.width())]
+    bottoms = [
+        count_lit(grid, (x, grid.max_y()), (0, -1)) for x in range(0, grid.width())
+    ]
+    lefts = [count_lit(grid, (0, y), (1, 0)) for y in range(0, grid.height())]
+    rights = [
+        count_lit(grid, (grid.max_x(), y), (-1, 0)) for y in range(0, grid.height())
+    ]
+    return max(chain(tops, bottoms, lefts, rights))
 
 
 def main() -> None:
