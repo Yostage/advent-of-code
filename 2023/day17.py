@@ -1,4 +1,5 @@
 import functools
+import heapq
 import re
 import sys
 from collections import defaultdict, deque
@@ -28,13 +29,15 @@ def part_one(lines) -> int:
     start_pos = (0, 0)
     best_score = max_int = sys.maxsize
     states_visited = 0
+    state_idx = 0
 
-    visit_queue: Deque[State] = deque(
-        [
-            State(pos=start_pos, facing=(0, 1), consecutive_moves=3, heat_cost=0),
-            State(pos=start_pos, facing=(1, 0), consecutive_moves=3, heat_cost=0),
-        ]
-    )
+    visit_queue: List[Tuple[int, int, State]] = [
+        (0, -1, State(pos=start_pos, facing=(0, 1), consecutive_moves=3, heat_cost=0)),
+        (0, -2, State(pos=start_pos, facing=(1, 0), consecutive_moves=3, heat_cost=0)),
+    ]
+
+    heapq.heapify(visit_queue)
+
     visited = defaultdict(
         lambda: defaultdict(lambda: defaultdict(lambda: max_int))
     )  # type:ignore
@@ -53,7 +56,7 @@ def part_one(lines) -> int:
     # v3: with pruning worse heat scores
 
     while len(visit_queue) > 0:
-        state = visit_queue.pop()
+        (_, _, state) = heapq.heappop(visit_queue)
         states_visited += 1
         if states_visited % 1000000 == 0:
             print(f"Visited states {states_visited:,}")
@@ -101,7 +104,8 @@ def part_one(lines) -> int:
                     visited[new_state.pos][new_state.facing][
                         moves_left
                     ] = new_state.heat_cost
-                visit_queue.appendleft(new_state)
+                state_idx += 1
+                heapq.heappush(visit_queue, (new_state.heat_cost, state_idx, new_state))
 
     print(f"Visited states {states_visited:,}")
     return best_score
@@ -113,12 +117,15 @@ def part_two(lines) -> int:
     best_score = max_int = sys.maxsize
     states_visited = 0
 
-    visit_queue: Deque[State] = deque(
-        [
-            State(pos=start_pos, facing=(0, 1), consecutive_moves=0, heat_cost=0),
-            State(pos=start_pos, facing=(1, 0), consecutive_moves=0, heat_cost=0),
-        ]
-    )
+    state_idx = 0
+
+    visit_queue: List[Tuple[int, int, State]] = [
+        (0, -1, State(pos=start_pos, facing=(0, 1), consecutive_moves=0, heat_cost=0)),
+        (0, -2, State(pos=start_pos, facing=(1, 0), consecutive_moves=0, heat_cost=0)),
+    ]
+
+    heapq.heapify(visit_queue)
+
     visited = defaultdict(
         lambda: defaultdict(lambda: defaultdict(lambda: max_int))
     )  # type:ignore
@@ -126,7 +133,7 @@ def part_two(lines) -> int:
     # v1
 
     while len(visit_queue) > 0:
-        state = visit_queue.pop()
+        (_, _, state) = heapq.heappop(visit_queue)
         states_visited += 1
         if states_visited % 1000000 == 0:
             print(f"Visited states {states_visited:,}")
@@ -178,7 +185,8 @@ def part_two(lines) -> int:
                     new_state.consecutive_moves
                 ] = new_state.heat_cost
 
-                visit_queue.appendleft(new_state)
+                state_idx += 1
+                heapq.heappush(visit_queue, (new_state.heat_cost, state_idx, new_state))
 
     print(f"Visited states {states_visited:,}")
     return best_score
