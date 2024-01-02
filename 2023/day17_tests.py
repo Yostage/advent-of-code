@@ -21,6 +21,12 @@ class TestDay17(unittest.TestCase):
 2546548887735
 4322674655533"""
 
+    example2 = """111111111111
+999999999991
+999999999991
+999999999991
+999999999991"""
+
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
 
@@ -30,7 +36,8 @@ class TestDay17(unittest.TestCase):
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 94)
+        self.assertEqual(part_two(self.example2.splitlines()), 71)
 
 
 if __name__ == "__main__":
