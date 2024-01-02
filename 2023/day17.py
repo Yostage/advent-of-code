@@ -4,13 +4,15 @@ from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Dict, List, TypeVar
 
+from CharacterGrid import CharacterGrid
 
-def parse_lines(lines: List[str]) -> Any:
-    return None
+
+def parse_lines(lines: List[str]) -> CharacterGrid:
+    return CharacterGrid.from_lines(lines)
 
 
 def part_one(lines) -> int:
-    parse_lines(lines)
+    grid = parse_lines(lines)
     return 0
 
 
@@ -28,4 +30,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
