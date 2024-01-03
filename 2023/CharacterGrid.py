@@ -1,3 +1,4 @@
+from enum import Enum
 from functools import lru_cache
 from typing import Dict, List
 
@@ -5,7 +6,20 @@ from util import Point2D
 
 CharacterGrid2D = Dict[Point2D, str]
 
-orthogonal_adjacencies = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+
+class Directions:
+    UP = NORTH = (0, -1)
+    DOWN = SOUTH = (0, 1)
+    LEFT = WEST = (-1, 0)
+    RIGHT = EAST = (1, 0)
+
+
+orthogonal_adjacencies = [
+    Directions.EAST,
+    Directions.SOUTH,
+    Directions.WEST,
+    Directions.NORTH,
+]
 
 
 class CharacterGrid:

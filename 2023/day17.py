@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
-from CharacterGrid import CharacterGrid
+from CharacterGrid import CharacterGrid, Directions
 from util import Point2D, tuple2_add
 
 
@@ -32,8 +32,20 @@ def part_one(lines) -> int:
     state_idx = 0
 
     visit_queue: List[Tuple[int, int, State]] = [
-        (0, -1, State(pos=start_pos, facing=(0, 1), consecutive_moves=3, heat_cost=0)),
-        (0, -2, State(pos=start_pos, facing=(1, 0), consecutive_moves=3, heat_cost=0)),
+        (
+            0,
+            -1,
+            State(
+                pos=start_pos, facing=Directions.SOUTH, consecutive_moves=3, heat_cost=0
+            ),
+        ),
+        (
+            0,
+            -2,
+            State(
+                pos=start_pos, facing=Directions.EAST, consecutive_moves=3, heat_cost=0
+            ),
+        ),
     ]
 
     heapq.heapify(visit_queue)
@@ -120,8 +132,20 @@ def part_two(lines) -> int:
     state_idx = 0
 
     visit_queue: List[Tuple[int, int, State]] = [
-        (0, -1, State(pos=start_pos, facing=(0, 1), consecutive_moves=0, heat_cost=0)),
-        (0, -2, State(pos=start_pos, facing=(1, 0), consecutive_moves=0, heat_cost=0)),
+        (
+            0,
+            -1,
+            State(
+                pos=start_pos, facing=Directions.SOUTH, consecutive_moves=0, heat_cost=0
+            ),
+        ),
+        (
+            0,
+            -2,
+            State(
+                pos=start_pos, facing=Directions.EAST, consecutive_moves=0, heat_cost=0
+            ),
+        ),
     ]
 
     heapq.heapify(visit_queue)
