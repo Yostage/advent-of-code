@@ -38,6 +38,14 @@ class CharacterGrid:
         )
 
     @lru_cache
+    def min_x(self) -> int:
+        return min(pt[0] for pt in self.map.keys())
+
+    @lru_cache
+    def min_y(self) -> int:
+        return min(pt[1] for pt in self.map.keys())
+
+    @lru_cache
     def max_x(self) -> int:
         return max(pt[0] for pt in self.map.keys())
 
@@ -46,13 +54,17 @@ class CharacterGrid:
         return max(pt[1] for pt in self.map.keys())
 
     def width(self) -> int:
-        return self.max_x() + 1
+        return self.max_x() - self.min_x()
 
     def height(self) -> int:
-        return self.max_y() + 1
+        return self.max_y() - self.min_y()
 
     def render(self) -> None:
         print()
-        for y in range(self.height()):
-            print("".join([self.map[(x, y)] for x in range(self.width())]))
+        for y in range(self.min_y(), self.max_y() + 1):
+            print(
+                "".join(
+                    [self.map[(x, y)] for x in range(self.min_x(), self.max_x() + 1)]
+                )
+            )
         print()
