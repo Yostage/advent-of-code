@@ -1,13 +1,9 @@
-import functools
-import itertools
 import unittest
-from typing import Iterator
 
 from day9 import parse_lines, part_one, part_two
 
 
 class TestDay9(unittest.TestCase):
-
     example = """"""
 
     def test_parse_lines(self):

@@ -20,7 +20,7 @@ def part_two(lines) -> int:
 
 
 def main() -> None:
-    with open("day9_input.txt", "r") as file:
+    with open("day19_input.txt", "r") as file:
         lines = file.read().splitlines()
         print(part_one(lines))
         print(part_two(lines))
@@ -28,3 +28,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
