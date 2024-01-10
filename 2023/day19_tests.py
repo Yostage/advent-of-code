@@ -27,7 +27,7 @@ hdj{m>838:A,pv}
 
     def test_part_one(self):
         result = part_one(self.example.splitlines())
-        # self.assertEqual(result, 19114)
+        self.assertEqual(result, 19114)
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
