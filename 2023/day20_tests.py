@@ -10,12 +10,20 @@ class TestDay20(unittest.TestCase):
 %c -> inv
 &inv -> a"""
 
+    example2 = """broadcaster -> a
+%a -> inv, con
+&inv -> b
+%b -> con
+&con -> output"""
+
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
 
     def test_part_one(self):
         result = part_one(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 32000000)
+        result = part_one(self.example2.splitlines())
+        self.assertEqual(result, 11687500)
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
