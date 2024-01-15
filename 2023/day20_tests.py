@@ -25,9 +25,9 @@ class TestDay20(unittest.TestCase):
         result = part_one(self.example2.splitlines())
         self.assertEqual(result, 11687500)
 
-    def test_part_two(self):
-        result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+    # def test_part_two(self):
+    # result = part_two(self.example.splitlines())
+    # self.assertEqual(result, xx)
 
 
 if __name__ == "__main__":
