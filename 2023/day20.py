@@ -211,17 +211,17 @@ def part_two(lines) -> int:
 
         for module in [
             # this one comes from rx
-            "zr",
+            "mf",
             # inputs 3 up from zr
-            "gc",
-            "sz",
-            "cm",
-            "xf",
+            # "gc",
+            # "sz",
+            # "cm",
+            # "xf",
             # the other one
             # rh -> ks -> cm
             # "rh",
             # "zz",
-            "ks",
+            # "ks",
             # tc -> mn -> xs -> zr
             # "tc",
             # "mn",
@@ -247,8 +247,8 @@ def part_two(lines) -> int:
         if presses % 10000 == 0:
             print(f"Press {presses}")
             print(f"rx: {modules['rx'].state}")
-            print(f"zr: {modules['zr'].state}")
-            firsts = [v for k, v in modules["zr"].state.items() if k.endswith("_first")]
+            print(f"mf: {modules['mf'].state}")
+            firsts = [v for k, v in modules["mf"].state.items() if k.endswith("_first")]
             if len(firsts) == 4:
                 return math.lcm(*firsts)
 
