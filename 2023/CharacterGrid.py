@@ -54,10 +54,10 @@ class CharacterGrid:
         return max(pt[1] for pt in self.map.keys())
 
     def width(self) -> int:
-        return self.max_x() - self.min_x()
+        return 1 + self.max_x() - self.min_x()
 
     def height(self) -> int:
-        return self.max_y() - self.min_y()
+        return 1 + self.max_y() - self.min_y()
 
     def render(self) -> None:
         print()

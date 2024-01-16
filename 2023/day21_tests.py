@@ -39,8 +39,14 @@ class TestDay21(unittest.TestCase):
         self.assertEqual(result, 16)
 
     def test_part_two(self):
-        result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        lines = self.example.splitlines()
+        self.assertEqual(part_two(lines, 6), 16)
+        self.assertEqual(part_two(lines, 10), 50)
+        self.assertEqual(part_two(lines, 50), 1594)
+        # self.assertEqual(part_two(lines, 100), 6536)
+        # self.assertEqual(part_two(lines, 500), 167004)
+        # self.assertEqual(part_two(lines, 1000), 668697)
+        # self.assertEqual(part_two(lines, 5000), 16733044)
 
 
 if __name__ == "__main__":
