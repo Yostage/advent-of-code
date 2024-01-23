@@ -1,5 +1,6 @@
 import functools
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cache
 from itertools import groupby
@@ -54,7 +55,7 @@ def idx_to_letter(idx: int) -> str:
     return chr(ord("A") + idx)
 
 
-def part_one(lines) -> int:
+def day_22_internal(lines) -> Tuple[int, int]:
     cubes = parse_lines(lines)
 
     for idx, cube in enumerate(cubes):
@@ -67,7 +68,11 @@ def part_one(lines) -> int:
 
     # first drop all cubes
     # all cubes fall down
-    supporting_cubes = set()
+    # supporting_cubes = set()
+
+    cube_to_below_cubes: Dict[str, Set[str]] = {}
+    # supported_by = defaultdict(set)
+    cube_to_above_cubes = defaultdict(set)
     cubes.sort(key=lambda cube: cube[0][2])
     for idx, cube in enumerate(cubes):
         # find its boundary, which is either the top of the cubes under it, or the ground
@@ -77,16 +82,22 @@ def part_one(lines) -> int:
         if len(below_cubes) == 0:
             # print(f"Cube {cube[2]} can fall")
             ceiling = 0
+            cube_to_below_cubes[cube[2]] = set()
         else:
             by_height = {k: v for k, v in groupby(below_cubes, key=lambda c: c[1][2])}
             (sort_key, values) = next(groupby(below_cubes, key=lambda c: -c[1][2]))
             ceiling = -sort_key
-            supporter_list = list(values)
+            supported_by_keys = list(v[2] for v in values)
+            for value in supported_by_keys:
+                cube_to_above_cubes[value].add(cube[2])
+
+            cube_to_below_cubes[cube[2]] = set(supported_by_keys)
+            # supporter_list = list(values)
             # print(
             #     f"Cube {cube[2]} is supported by {','.join([c[2] for c in supporter_list])}"
             # )
-            if len(supporter_list) == 1:
-                supporting_cubes.add(supporter_list[0])
+            # if len(supporter_list) == 1:
+            # supporting_cubes.add(supporter_list[0])
 
         delta = cube[0][2] - (ceiling + 1)
         translation = (0, 0, -delta)
@@ -98,19 +109,59 @@ def part_one(lines) -> int:
         # print(f"After translating by {delta},  {new_cube}")
         cubes[idx] = new_cube
 
-    return len(cubes) - len(supporting_cubes)
+    # print(support_list)
+    # print(supported_by)
+    # print(set(list(x)[0] for x in supported_by.values() if len(x) == 1))
+    destructible_cubes = len(cubes) - len(
+        set(list(x)[0] for x in cube_to_below_cubes.values() if len(x) == 1)
+    )
+
+    def count_total_chain_reaction(key: str) -> int:
+        next_splode = [key]
+        destroyed = set()
+        while True:
+            if len(next_splode) == 0:
+                break
+            this_splode = next_splode
+            next_splode = []
+            # mark all blocks in this wave destroyed
+            destroyed.update(this_splode)
+            # and mark the next outgoing wave
+            for cube in this_splode:
+                for block_up in cube_to_above_cubes[cube]:
+                    if all(
+                        support in destroyed
+                        for support in cube_to_below_cubes[block_up]
+                    ):
+                        next_splode.append(block_up)
+
+        # print(f"Cube {key} chain reaction = {len(destroyed)-1}")
+        # we're not allowed to count the initial block in the reaction
+        return len(destroyed) - 1
+
+    return (
+        destructible_cubes,
+        sum(
+            count_total_chain_reaction(cube_key)
+            for cube_key in cube_to_below_cubes.keys()
+        ),
+    )
+
+
+def part_one(lines) -> int:
+    return day_22_internal(lines)[0]
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    return day_22_internal(lines)[1]
 
 
 def main() -> None:
     with open("day22_input.txt", "r") as file:
         lines = file.read().splitlines()
-        print(part_one(lines))
-        print(part_two(lines))
+        (one, two) = day_22_internal(lines)
+        print(one)
+        print(two)
 
 
 if __name__ == "__main__":
