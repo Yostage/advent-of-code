@@ -22,6 +22,24 @@ def manhattan_distance(a: Point2D, b: Point2D) -> int:
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
+# 2022.18
+Point3D = Tuple[int, int, int]
+
+
+def tuple3_add(a: Point3D, b: Point3D) -> Point3D:
+    return tuple(map(sum, zip(a, b)))  # type: ignore
+
+
+all_3d_vectors = (
+    (1, 0, 0),
+    (-1, 0, 0),
+    (0, 1, 0),
+    (0, -1, 0),
+    (0, 0, 1),
+    (0, 0, -1),
+)
+
+
 class CallCounter(object):
     "Decorator that keeps track of the number of times a function is called."
 
