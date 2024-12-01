@@ -6,12 +6,14 @@ from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
 
 def parse_lines(lines: List[str]) -> Any:
-    return None
+    return [line.split() for line in lines]
 
 
 def part_one(lines) -> int:
-    parse_lines(lines)
-    return 0
+    v = parse_lines(lines)
+    left, right = zip(*v)
+    deltas = [abs(int(r) - int(l)) for (l, r) in zip(sorted(left), sorted(right))]
+    return sum(deltas)
 
 
 def part_two(lines) -> int:
@@ -28,4 +30,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
