@@ -1,5 +1,6 @@
 import functools
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
@@ -17,8 +18,11 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    v = parse_lines(lines)
+    left, right = zip(*v)
+    frequencies = Counter(right)
+    similarities = [int(x) * frequencies.get(x, 0) for x in left]
+    return sum(similarities)
 
 
 def main() -> None:
