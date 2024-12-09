@@ -1,3 +1,6 @@
+# 2024.02
+sgn = lambda x: (x > 0) - (x < 0)
+
 # 2022.15
 from typing import Tuple
 
