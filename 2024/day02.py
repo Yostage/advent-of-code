@@ -34,7 +34,7 @@ def report_is_safe(report: List[int]):
 
         if abs(delta) > 3:
             return False
-    print(f"{report}: true")
+    # print(f"{report}: true")
     return True
 
 
@@ -43,9 +43,13 @@ def part_one(lines) -> int:
     return sum(1 if report_is_safe(report) else 0 for report in reports)
 
 
+def report_is_sliceable(report: List[int]):
+    return any(report_is_safe(report[:k] + report[k + 1 :]) for k in range(len(report)))
+
+
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    reports = parse_lines(lines)
+    return sum(1 if report_is_sliceable(report) else 0 for report in reports)
 
 
 def main() -> None:
