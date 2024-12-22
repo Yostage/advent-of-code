@@ -4,7 +4,7 @@ from day04 import parse_lines, part_one, part_two
 
 
 class TestDay04(unittest.TestCase):
-    example2 = """MMMSXXMASM
+    example = """MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
 MSAMASMSMX
@@ -15,7 +15,7 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX"""
 
-    example = """....XXMAS.
+    example2 = """....XXMAS.
 .SAMXMS...
 ...S..A...
 ..A.A.MS.X
@@ -35,7 +35,7 @@ S.S.S.S.SS
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 9)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from functools import cache
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
 from CharacterGrid import CharacterGrid, Directions
-from util import tuple2_add, tuple2_scalar_mul
+from util import Point2D, tuple2_add, tuple2_scalar_mul
 
 
 def parse_lines(lines: List[str]) -> Any:
@@ -64,13 +64,40 @@ def part_one(lines) -> int:
         total += count_xmases(row)
 
     print
-
     return total
 
 
+def is_xmas(p: Point2D, map: CharacterGrid) -> bool:
+
+    if list(
+        sorted(
+            [
+                c
+                for c in [map.map.get(tuple2_add(p, d)) for d in [(-1, -1), (1, 1)]]
+                if c is not None
+            ]
+        )
+    ) != ["M", "S"]:
+        return False
+    if list(
+        sorted(
+            [
+                c
+                for c in [map.map.get(tuple2_add(p, d)) for d in [(1, -1), (-1, 1)]]
+                if c is not None
+            ]
+        )
+    ) != ["M", "S"]:
+        return False
+
+    if map.map[p] != "A":
+        return False
+    return True
+
+
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    map = parse_lines(lines)
+    return sum(is_xmas(pt, map) for pt in map.map.keys())
 
 
 def main() -> None:
