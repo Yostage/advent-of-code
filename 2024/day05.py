@@ -1,8 +1,5 @@
-import functools
-import re
-from dataclasses import dataclass, field
-from functools import cache
-from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
+from collections import deque
+from typing import Any, List
 
 
 def parse_lines(lines: List[str]) -> Any:
@@ -22,7 +19,8 @@ def parse_lines(lines: List[str]) -> Any:
 
 def test_update(rules, update):
     page_order_map = {page: index for index, page in enumerate(update)}
-    print(page_order_map)
+    # print(page_order_map)
+    print(f"Testing : {update}")
     for rule in rules:
         if (
             rule[0] in page_order_map
@@ -37,16 +35,45 @@ def test_update(rules, update):
 
 def part_one(lines) -> int:
     (rules, updates) = parse_lines(lines)
-    print(rules)
-    print
-    print(updates)
-
     return sum(test_update(rules, update) for update in updates)
+
+
+def sort_update(rules, update):
+    updates_remaining = set(update)
+    sorted = deque([])
+    relevant_rules = rules
+    while len(updates_remaining) > 0:
+        print(f"Sorting {updates_remaining}")
+
+        # base case
+        if len(updates_remaining) == 1:
+            sorted.appendleft(updates_remaining.pop())
+            return sorted
+
+        relevant_rules = [
+            rule
+            for rule in relevant_rules
+            if rule[0] in updates_remaining and rule[1] in updates_remaining
+        ]
+        print(relevant_rules)
+
+        # which element is never first
+        firsts = set(rule[0] for rule in relevant_rules)
+        left_out = updates_remaining - firsts
+        assert len(left_out) == 1
+        last = left_out.pop()
+        sorted.appendleft(last)
+        updates_remaining.remove(last)
+    assert False
 
 
 def part_two(lines) -> int:
     parse_lines(lines)
-    return 0
+    (rules, updates) = parse_lines(lines)
+
+    broken_updates = filter(lambda update: test_update(rules, update) == 0, updates)
+    sorted_broken_updates = [sort_update(rules, update) for update in broken_updates]
+    return sum(test_update(rules, update) for update in sorted_broken_updates)
 
 
 def main() -> None:
