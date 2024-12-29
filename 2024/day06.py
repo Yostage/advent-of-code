@@ -1,23 +1,51 @@
 import functools
 import re
+from collections import OrderedDict
 from dataclasses import dataclass, field
 from functools import cache
+from itertools import cycle
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
-from CharacterGrid import CharacterGrid
+from CharacterGrid import CharacterGrid, Directions
+from util import tuple2_add
+
+char_to_directions = {
+    "^": Directions.UP,
+    ">": Directions.RIGHT,
+    "V": Directions.DOWN,
+    "<": Directions.LEFT,
+}
+
+turn_order = [Directions.UP, Directions.RIGHT, Directions.DOWN, Directions.LEFT]
+
+directions_to_char = {v: k for k, v in char_to_directions.items()}
 
 
-def parse_lines(lines: List[str]) -> Any:
+def parse_lines(lines: List[str]) -> CharacterGrid:
     return CharacterGrid.from_lines(lines)
 
 
 def part_one(lines) -> int:
-    parse_lines(lines)
-    return 0
+    map = parse_lines(lines)
+    (loc, _) = next((k, v) for k, v in map.map.items() if v == "^")
+    direction_iterator = cycle(turn_order)
+    current_facing = next(direction_iterator)
+    while True:
+        next_step = tuple2_add(loc, current_facing)
+        next_contents = map.map.get(next_step)
+        if next_contents == "#":
+            current_facing = next(direction_iterator)
+            continue
+        map.map[loc] = "X"
+        loc = next_step
+        if next_contents is None:
+            break
+
+    return sum(1 for v in map.map.values() if v == "X")
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
+    map = parse_lines(lines)
     return 0
 
 
