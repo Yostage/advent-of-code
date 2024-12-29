@@ -7,7 +7,7 @@ from itertools import cycle
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
 from CharacterGrid import CharacterGrid, Directions
-from util import tuple2_add
+from util import Point2D, tuple2_add
 
 char_to_directions = {
     "^": Directions.UP,
@@ -44,9 +44,33 @@ def part_one(lines) -> int:
     return sum(1 for v in map.map.values() if v == "X")
 
 
+def has_cycle(lines: List[str], added_obstacle: Point2D):
+    map = parse_lines(lines)
+    map.map[added_obstacle] = "#"
+    direction_iterator = cycle(turn_order)
+    current_facing = next(direction_iterator)
+    (loc, _) = next((k, v) for k, v in map.map.items() if v == "^")
+    visited = set()
+    while True:
+        if (loc, current_facing) in visited:
+            return True
+        visited.add((loc, current_facing))
+        next_step = tuple2_add(loc, current_facing)
+        next_contents = map.map.get(next_step)
+        if next_contents == "#":
+            current_facing = next(direction_iterator)
+            continue
+        loc = next_step
+
+        if next_contents is None:
+            return False
+
+
 def part_two(lines) -> int:
     map = parse_lines(lines)
-    return 0
+    # n.b. the full candidate list can be just the traversal from part 1
+    candidates = [k for k, v in map.map.items() if v == "."]
+    return sum(1 for c in candidates if has_cycle(lines, c))
 
 
 def main() -> None:
