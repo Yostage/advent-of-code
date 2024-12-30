@@ -40,7 +40,8 @@ def concat(l: int, r: int) -> int:
     return int(str(l) + str(r))
 
 
-def can_day2_make_value(value: int, lhs: int, operands: List[int]) -> bool:
+# @cache
+def can_day2_make_value(value: int, lhs: int, operands: Tuple[int, ...]) -> bool:
     # base case
     if len(operands) == 1:
         remaining = operands[0]
@@ -64,7 +65,7 @@ def part_two(lines) -> int:
         int(total)
         for (total, operands) in equations
         if can_day2_make_value(
-            int(total), int(operands[0]), [int(o) for o in operands[1:]]
+            int(total), int(operands[0]), tuple([int(o) for o in operands[1:]])
         )
     )
 
