@@ -5,11 +5,11 @@ from functools import cache
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
 
-def parse_lines(lines: List[str]) -> Any:
+def parse_lines(lines: List[str]) -> List[Tuple[str, List[str]]]:
     equations = []
     for line in lines:
         (l, r) = line.split(": ")
-        values = [float(v) for v in r.split(" ")]
+        values = [v for v in r.split(" ")]
         equations.append((l, values))
     return equations
 
@@ -32,13 +32,41 @@ def part_one(lines) -> int:
     return sum(
         int(total)
         for (total, operands) in equations
-        if can_equation_make_value(float(total), operands)
+        if can_equation_make_value(float(total), [float(o) for o in operands])
+    )
+
+
+def concat(l: int, r: int) -> int:
+    return int(str(l) + str(r))
+
+
+def can_day2_make_value(value: int, lhs: int, operands: List[int]) -> bool:
+    # base case
+    if len(operands) == 1:
+        remaining = operands[0]
+        return (
+            value == (lhs + remaining)
+            or value == (lhs * remaining)
+            or value == concat(lhs, remaining)
+        )
+
+    popped_op = operands[0]
+    return (
+        can_day2_make_value(value, lhs + popped_op, operands[1:])
+        or can_day2_make_value(value, lhs * popped_op, operands[1:])
+        or can_day2_make_value(value, concat(lhs, popped_op), operands[1:])
     )
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    equations = parse_lines(lines)
+    return sum(
+        int(total)
+        for (total, operands) in equations
+        if can_day2_make_value(
+            int(total), int(operands[0]), [int(o) for o in operands[1:]]
+        )
+    )
 
 
 def main() -> None:
