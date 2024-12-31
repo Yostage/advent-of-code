@@ -59,14 +59,32 @@ def can_day2_make_value(value: int, lhs: int, operands: Tuple[int, ...]) -> bool
     )
 
 
+# @cache
+def all_possible_results(operands: Tuple[int, ...]) -> Set[int]:
+    if len(operands) == 1:
+        return set([operands[0]])
+
+    results = set()
+    popped_op = operands[-1]
+    for op in all_possible_results(operands[:-1]):
+        results.add(popped_op + op)
+        results.add(popped_op * op)
+        results.add(concat(op, popped_op))
+
+    # print(operands, results)
+    # print()
+    return results
+
+
 def part_two(lines) -> int:
     equations = parse_lines(lines)
     return sum(
         int(total)
         for (total, operands) in equations
-        if can_day2_make_value(
-            int(total), int(operands[0]), tuple([int(o) for o in operands[1:]])
-        )
+        # if can_day2_make_value(
+        #     int(total), int(operands[0]), tuple([int(o) for o in operands[1:]])
+        # )
+        if int(total) in all_possible_results(tuple([int(o) for o in operands]))
     )
 
 
