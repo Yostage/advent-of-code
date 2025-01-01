@@ -26,7 +26,7 @@ class TestDay08(unittest.TestCase):
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 34)
 
 
 if __name__ == "__main__":

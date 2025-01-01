@@ -12,6 +12,10 @@ def tuple2_add(a: Point2D, b: Point2D) -> Point2D:
     return tuple(map(sum, zip(a, b)))  # type: ignore
 
 
+def tuple2_sub(a: Point2D, b: Point2D) -> Point2D:
+    return tuple2_add(a, tuple2_scalar_mul(b, -1))
+
+
 def tuple2_scalar_mul(a: Point2D, b: int) -> Point2D:
     return tuple([b * x for x in a])  # type: ignore
 
