@@ -1,6 +1,6 @@
 import functools
 import re
-from collections import deque
+from collections import OrderedDict, deque
 from dataclasses import dataclass, field
 from functools import cache
 from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
@@ -23,7 +23,7 @@ def parse_lines(lines: List[str]) -> Any:
             fileidx = filecount
             filecount += 1
 
-            files[fileidx] = range(diskhead, diskhead + file_len)
+            files[fileidx] = (diskhead, file_len)
             disk.extend([fileidx] * file_len)
             diskhead += file_len
         if idx % 2 == 1:
@@ -34,6 +34,31 @@ def parse_lines(lines: List[str]) -> Any:
             diskhead += free_len
 
     return (files, freelist, disk)
+
+
+def parse_lines2(lines: List[str]) -> Any:
+    # each character is an alternating between a file length and a free block length
+    # file x++ gets the following N slots
+    # then the free list gets the next N slots
+    files = OrderedDict()
+    freelist = deque()
+    filecount = 0
+    diskhead = 0
+
+    for idx, c in enumerate(lines[0]):
+        if idx % 2 == 0:
+            # a new file with length n
+            l = int(c)
+            files[filecount] = (diskhead, l)
+            filecount += 1
+            diskhead += l
+        if idx % 2 == 1:
+            # free spot
+            l = int(c)
+            freelist.append((diskhead, l))
+            diskhead += l
+
+    return (files, freelist)
 
 
 def part_one(lines) -> int:
@@ -58,8 +83,35 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    (files, freelist) = parse_lines2(lines)
+    # print(files)
+    # print(freelist)
+    # print(disk)
+
+    for filenum, v in reversed(files.items()):
+        (file_start, file_len) = v
+
+        if len(freelist) == 0:
+            break
+        # attempt to move this file into each freelist spot, starting with the first, break it up if necessary
+        for free_start, free_len in sorted(freelist):
+
+            if free_len < file_len:
+                continue
+            if file_start < free_start:
+                continue
+
+            # print("Moving file", filenum, "to", free_start, "from", file_start)
+            freelist.remove((free_start, free_len))
+            files[filenum] = (free_start, file_len)
+            if free_len > file_len:
+                freelist.appendleft((free_start + file_len, free_len - file_len))
+            break
+    # nx + (n(n-1))/2
+    sum = 0
+    for idx, (start, l) in files.items():
+        sum += idx * (start * l + (l * (l - 1)) // 2)
+    return sum
 
 
 def main() -> None:
