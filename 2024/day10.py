@@ -41,9 +41,31 @@ def part_one(lines) -> int:
     return sum(find_the_nines(loc, grid) for loc, val in grid.map.items() if val == "0")
 
 
+def find_all_paths_to_nines(start: Point2D, grid: CharacterGrid) -> int:
+    map = grid.map
+    to_visit: Deque[Tuple[Point2D, ...]] = deque([(start,)])
+    paths_found = 0
+    while to_visit:
+        path = to_visit.popleft()
+        final_step = path[-1]
+        if map[final_step] == "9":
+            paths_found += 1
+            continue
+        for direction in orthogonal_adjacencies:
+            new_loc = tuple2_add(final_step, direction)
+            if new_loc in map:
+                if int(map[new_loc]) == int(map[final_step]) + 1:
+                    to_visit.append(path + (new_loc,))
+    return paths_found
+
+
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    grid = parse_lines(lines)
+    return sum(
+        find_all_paths_to_nines(loc, grid)
+        for loc, val in grid.map.items()
+        if val == "0"
+    )
 
 
 def main() -> None:
