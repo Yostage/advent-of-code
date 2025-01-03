@@ -4,7 +4,7 @@ from day11 import parse_lines, part_one, part_two
 
 
 class TestDay11(unittest.TestCase):
-    example = """"""
+    example = """125 17"""
 
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
