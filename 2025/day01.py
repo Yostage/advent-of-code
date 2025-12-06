@@ -6,12 +6,24 @@ from typing import Any, Deque, Dict, List, Set, Tuple, TypeVar
 
 
 def parse_lines(lines: List[str]) -> Any:
-    return None
+    return [(line[0], int(line[1:])) for line in lines]
 
 
 def part_one(lines) -> int:
-    parse_lines(lines)
-    return 0
+    dial = 50
+    clicks = 0
+    turns = parse_lines(lines)
+    for turn in turns:
+        direction, distance = turn
+        if direction == "L":
+            dial -= distance
+        else:
+            dial += distance
+        dial %= 100
+        if dial == 0:
+            clicks += 1
+
+    return clicks
 
 
 def part_two(lines) -> int:
@@ -28,4 +40,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
