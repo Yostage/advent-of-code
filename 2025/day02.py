@@ -1,4 +1,5 @@
 import functools
+import itertools
 import re
 from dataclasses import dataclass, field
 from functools import cache
@@ -33,7 +34,24 @@ def part_one(lines) -> int:
 
 def part_two(lines) -> int:
     parse_lines(lines)
-    return 0
+    total = 0
+    lines = parse_lines(lines)
+    for line in lines:
+        (min, max) = line.split("-")
+        for id in range(int(min), int(max) + 1):
+            testable = str(id)
+            for chunk_size in range(1, len(testable) // 2 + 1):
+
+                if len(testable) % chunk_size != 0:
+                    continue
+
+                chunks = list(itertools.batched(testable, chunk_size))
+                assert all(len(chunk) == chunk_size for chunk in chunks)
+                if all(chunk == chunks[0] for chunk in chunks):
+                    total += id
+                    print(f"Found repeat with chunk size {chunk_size}: {id}")
+                    break
+    return total
 
 
 def main() -> None:
