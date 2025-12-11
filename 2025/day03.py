@@ -24,7 +24,36 @@ def part_one(lines) -> int:
 
 def part_two(lines) -> int:
     parse_lines(lines)
-    return 0
+    batteries_per_line = 12
+    total = 0
+    for line in lines:
+        print(line)
+        first_available = 0
+        batteries = [int(x) for x in line]
+
+        lit = []
+        for slot in range(batteries_per_line):
+            # first one should be 0:-11
+            # print("currently lit", lit)
+            last_available = -(batteries_per_line - 1 - slot)
+            if last_available == 0:
+                last_available = None
+            # print("RANGE", first_available, last_available)
+            slice = batteries[first_available:last_available]
+            # print("Batteries", slice)
+            this_place = max(slice)
+            lit.append(this_place)
+            first_available = first_available + slice.index(this_place) + 1
+            # print("Chose battery at index ", first_available - 1)
+
+        this_line = 0
+        for l in lit:
+            this_line *= 10
+            this_line += l
+
+        # print("This line", this_line)
+        total += this_line
+    return total
 
 
 def main() -> None:
