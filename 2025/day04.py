@@ -17,10 +17,9 @@ def part_one(lines) -> int:
     grid.render()
     total = 0
     candidates = []
-    for pt in grid.map.keys():
+    papers = set(k for k, v in grid.map.items() if v == "@")
+    for pt in papers:
         # for pt in [(2, 0)]:
-        if grid.map[pt] != "@":
-            continue
         neighbor_count = 0
         for dir in all_adjacencies:
             neighbor = tuple2_add(pt, dir)
@@ -40,8 +39,34 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    grid = parse_lines(lines)
+    grid.render()
+    total = 0
+
+    papers = set(k for k, v in grid.map.items() if v == "@")
+    while True:
+        removal_candidates = []
+        for pt in papers:
+            neighbor_count = 0
+            for dir in all_adjacencies:
+                neighbor = tuple2_add(pt, dir)
+                if neighbor in grid.map and grid.map[neighbor] == "@":
+                    neighbor_count += 1
+                    # print(f"  neighbor at {neighbor}")
+            # print(f"Point {pt} has {neighbor_count} neighbors")
+            if neighbor_count < 4:
+                removal_candidates.append(pt)
+                total += 1
+
+        for pt in removal_candidates:
+            grid.map[pt] = "x"
+            papers.remove(pt)
+        grid.render()
+
+        if removal_candidates == []:
+            break
+
+    return total
 
 
 def main() -> None:
