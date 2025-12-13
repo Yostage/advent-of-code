@@ -21,6 +21,15 @@ orthogonal_adjacencies = [
     Directions.NORTH,
 ]
 
+diagonal_adjacencies = [
+    (1, 1),
+    (1, -1),
+    (-1, 1),
+    (-1, -1),
+]
+
+all_adjacencies = orthogonal_adjacencies + diagonal_adjacencies
+
 
 class CharacterGrid:
     map: CharacterGrid2D
