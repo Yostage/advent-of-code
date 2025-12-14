@@ -13,14 +13,12 @@ def parse_lines(lines: List[str]) -> Any:
             break
         ranges.append(tuple(map(int, line.split("-"))))
 
-    next(i)
+    # next(i)
 
     ingredients = []
     for line in i:
         ingredients.append(int(line))
 
-    # print(len(ranges), "ranges:", ranges)
-    # print(len(ingredients), "ingredients:", ingredients)
     assert len(ranges) > 0
     assert len(ingredients) > 0
     return (ranges, ingredients)
@@ -31,20 +29,7 @@ def part_one(lines) -> int:
         return any(r[0] <= i <= r[1] for r in ranges)
 
     (ranges, ingredients) = parse_lines(lines)
-    # total = 0
     return sum(1 if test_ranges(ranges, i) else 0 for i in ingredients)
-    # for i in ingredients:
-
-    # total += 1
-    # else:
-    # print(f"Value {i} is not in any range")
-    #     continue
-    # for r in ranges:
-    #     if r[0] <= i <= r[1]:
-    #         total += 1
-    #         break
-
-    # return total
 
 
 def part_two(lines) -> int:
