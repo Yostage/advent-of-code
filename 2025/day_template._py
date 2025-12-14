@@ -11,12 +11,14 @@ def parse_lines(lines: List[str]) -> Any:
 
 def part_one(lines) -> int:
     parse_lines(lines)
-    return 0
+    total = 0
+    return total
 
 
 def part_two(lines) -> int:
     parse_lines(lines)
-    return 0
+    total = 0
+    return total
 
 
 def main() -> None:
