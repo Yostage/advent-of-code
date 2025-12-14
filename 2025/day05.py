@@ -33,8 +33,17 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    parse_lines(lines)
-    return 0
+    # sort intervals and merge overlapping ones
+    # then just sum them all
+    ranges, _ = parse_lines(lines)
+    ranges = list(sorted(ranges, key=lambda x: x[0]))
+    merged = []
+    for r in ranges:
+        if not merged or merged[-1][1] < r[0] - 1:
+            merged.append(r)
+        else:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], r[1]))
+    return sum(r[1] - r[0] + 1 for r in merged)
 
 
 def main() -> None:
