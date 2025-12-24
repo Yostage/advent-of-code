@@ -1,10 +1,12 @@
 # 2024.02
-sgn = lambda x: (x > 0) - (x < 0)
+def sgn(x):
+    return (x > 0) - (x < 0)
+
 
 # 2022.15
-from typing import Tuple
+# from typing import Tuple
 
-Point2D = Tuple[int, int]
+Point2D = tuple[int, int]
 
 
 # 2022.22
@@ -30,7 +32,7 @@ def manhattan_distance(a: Point2D, b: Point2D) -> int:
 
 
 # 2022.18
-Point3D = Tuple[int, int, int]
+Point3D = tuple[int, int, int]
 
 
 def tuple3_add(a: Point3D, b: Point3D) -> Point3D:
