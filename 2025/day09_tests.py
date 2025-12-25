@@ -4,15 +4,14 @@ from day09 import parse_lines, part_one, part_two
 
 
 class TestDay09(unittest.TestCase):
-    example = """..............
-.......#...#..
-..............
-..#....#......
-..............
-..OOOOOOOO....
-..OOOOOOOO....
-..OOOOOOOO.#..
-.............."""
+    example = """7,1
+11,1
+11,7
+9,7
+9,5
+2,5
+2,3
+7,3"""
 
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
@@ -23,7 +22,7 @@ class TestDay09(unittest.TestCase):
 
     def test_part_two(self):
         result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        self.assertEqual(result, 24)
 
 
 if __name__ == "__main__":
