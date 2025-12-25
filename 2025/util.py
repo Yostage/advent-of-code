@@ -39,6 +39,10 @@ def tuple3_add(a: Point3D, b: Point3D) -> Point3D:
     return tuple(map(sum, zip(a, b)))  # type: ignore
 
 
+def manhattan_distance(a: Point3D, b: Point3D) -> int:
+    return abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2])
+
+
 all_3d_vectors = (
     (1, 0, 0),
     (-1, 0, 0),
