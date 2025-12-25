@@ -70,18 +70,6 @@ def part_one(lines) -> int:
 
 
 def part_two(lines) -> int:
-    def is_connected(points, edges):
-        to_visit = set(points)
-        visited = set()
-        stack = [to_visit.pop()]
-        while stack:
-            node = stack.pop()
-            visited.add(node)
-            for neighbor in edges[node]:
-                if neighbor not in visited and neighbor not in stack:
-                    stack.append(neighbor)
-                    to_visit.discard(neighbor)
-        return len(visited) == len(points)
 
     points = parse_lines(lines)
 
@@ -94,13 +82,32 @@ def part_two(lines) -> int:
             )
 
     edges = defaultdict(set)
+    unvisited = set(points)
+    visited = set()
+    stack = []
 
     while distance_heap:
         (_, (a, b)) = heapq.heappop(distance_heap)
         edges[a].add(b)
         edges[b].add(a)
+        if len(visited) == 0:
+            stack = [a]
+            unvisited.discard(a)
+        if a in visited and b in unvisited:
+            stack = [a]
+            unvisited.discard(a)
+        if b in visited and a in unvisited:
+            stack = [b]
+            unvisited.discard(b)
 
-        if is_connected(points, edges):
+        while stack:
+            node = stack.pop()
+            visited.add(node)
+            for neighbor in edges[node]:
+                if neighbor not in visited and neighbor not in stack:
+                    stack.append(neighbor)
+                    unvisited.discard(neighbor)
+        if len(visited) == len(points):
             return a[0] * b[0]
 
     return -1
