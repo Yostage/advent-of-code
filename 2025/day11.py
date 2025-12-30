@@ -1,0 +1,32 @@
+import functools
+import re
+from dataclasses import dataclass, field
+from functools import cache
+
+
+def parse_lines(lines: list[str]) -> any:
+    return None
+
+
+def part_one(lines) -> int:
+    parse_lines(lines)
+    total = 0
+    return total
+
+
+def part_two(lines) -> int:
+    parse_lines(lines)
+    total = 0
+    return total
+
+
+def main() -> None:
+    with open("day11_input.txt", "r") as file:
+        lines = file.read().splitlines()
+        print(part_one(lines))
+        print(part_two(lines))
+
+
+if __name__ == "__main__":
+    main()
+
