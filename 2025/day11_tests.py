@@ -15,6 +15,20 @@ ggg: out
 hhh: ccc fff iii
 iii: out"""
 
+    example2 = """svr: aaa bbb
+aaa: fft
+fft: ccc
+bbb: tty
+tty: ccc
+ccc: ddd eee
+ddd: hub
+hub: fff
+eee: dac
+dac: fff
+fff: ggg hhh
+ggg: out
+hhh: out"""
+
     def test_parse_lines(self):
         parse_lines(self.example.splitlines())
 
@@ -23,8 +37,8 @@ iii: out"""
         self.assertEqual(result, 5)
 
     def test_part_two(self):
-        result = part_two(self.example.splitlines())
-        # self.assertEqual(result, xx)
+        result = part_two(self.example2.splitlines())
+        self.assertEqual(result, 2)
 
 
 if __name__ == "__main__":
