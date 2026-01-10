@@ -31,11 +31,44 @@ def parse_lines(lines: list[str]):
 
 
 def part_one(lines) -> int:
+    def does_region_fit(region):
+        ((width, height), present_requirements) = region
+        available_size = width * height
+
+        tiled_size = sum(
+            present_requirement * grid_square_sizes[i]
+            for i, present_requirement in enumerate(present_requirements)
+        )
+        if available_size >= tiled_size:
+            return True
+
+        minimum_x = sum(
+            present_requirement * grid_xes[i]
+            for i, present_requirement in enumerate(present_requirements)
+        )
+        print(f"{minimum_x} to fit in {available_size}: {minimum_x <= available_size}")
+        if minimum_x > available_size:
+            return False
+
+        # base case
+        print("unknown region")
+        print(region)
+        return None
+
     (grids, regions) = parse_lines(lines)
-    for grid in grids:
-        grid.render()
-    print(regions)
+    # for grid in grids:
+    # grid.render()
+    grid_xes = [sum(1 if v == "#" else 0 for v in grid.map.values()) for grid in grids]
+    grid_square_sizes = [grid.width() * grid.height() for grid in grids]
+    # for idx, size in enumerate(grid_sizes):
+    # print(f"{idx} : {size}")
+
     total = 0
+
+    return sum(1 if does_region_fit(region) else 0 for region in regions)
+
+    # print(regions)
+
     return total
 
 
